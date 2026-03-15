@@ -32,3 +32,4 @@ dependencyResolutionManagement {
 
 includeBuild("publication")
 
+include(":remote-config")
