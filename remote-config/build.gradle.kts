@@ -43,6 +43,9 @@ kotlin {
             create("RemoteConfig") {
                 defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
             }
+            create("FirebaseCore") {
+                defFile(project.layout.projectDirectory.file("src/interop/FirebaseCore.def"))
+            }
         }
     }
     js {
@@ -129,22 +132,24 @@ fun Project.generateFirebaseConfigDefFiles() {
         @TaskAction
         fun generate() {
             interopDir.get().asFile.mkdirs()
-            val firebaseConfigHeaders = "FirebaseRemoteConfig.h"
 
-            // Helper function to generate header paths
-            fun headerPath(): String {
-                return interopDir.dir("libs/$firebaseConfigHeaders")
-                    .get().asFile.absolutePath
-            }
+            // Generate RemoteConfig.def
+            val remoteConfigDefFile = File(interopDir.get().asFile, "RemoteConfig.def")
+            remoteConfigDefFile.writeText(defFileContent("FirebaseRemoteConfig"))
 
-            val defFile = File(interopDir.get().asFile, "RemoteConfig.def")
-            val content = """
-                language = Objective-C
-                package = ${packageName.get()}
-                headers = ${headerPath()}
-            """.trimIndent()
+            // Generate FirebaseCore.def
+            val firebaseCoreDefFile = File(interopDir.get().asFile, "FirebaseCore.def")
+            firebaseCoreDefFile.writeText(defFileContent("FirebaseCore"))
+        }
 
-            defFile.writeText(content)
+        private fun defFileContent(fileName: String): String {
+            val libsDir = interopDir.dir("libs").get().asFile
+
+            return """
+                       language = Objective-C
+                       package = ${packageName.get()}
+                       headers = ${File(libsDir, "$fileName.h").absolutePath}
+                   """.trimIndent()
         }
     }
 
@@ -155,7 +160,7 @@ fun Project.generateFirebaseConfigDefFiles() {
     }
 
     tasks.withType<CInteropProcess>()
-        .matching { it.name.startsWith("cinteropRemoteConfig") }
+        .matching { it.name.startsWith("cinteropRemoteConfig") || it.name.startsWith("cinteropFirebaseCore") }
         .configureEach {
             dependsOn(tasks.named(taskName))
         }
