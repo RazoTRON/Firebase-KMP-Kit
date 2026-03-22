@@ -5,8 +5,10 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.jvm)
 }
+
 dependencies {
-    implementation(project(":sample:shared"))
+    implementation(projects.sample.shared)
+    implementation(projects.remoteConfig)
 }
 
 compose.desktop {

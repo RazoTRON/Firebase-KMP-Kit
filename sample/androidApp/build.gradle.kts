@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -14,7 +15,7 @@ android {
         minSdk = 23
         targetSdk = 36
 
-        applicationId = "com.firebasekit.sample.androidApp"
+        applicationId = "com.firebasekit.sample"
         versionCode = 1
         versionName = "1.0.0"
     }
@@ -30,6 +31,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":sample:shared"))
+    implementation(projects.remoteConfig)
+    implementation(projects.sample.shared)
+
     implementation(libs.androidx.activityCompose)
 }

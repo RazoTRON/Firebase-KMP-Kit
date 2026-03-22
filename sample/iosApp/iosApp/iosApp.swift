@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Firebase
 
 @main
 struct ComposeApp: App {
@@ -12,6 +13,8 @@ struct ComposeApp: App {
 
 struct ContentView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
+        FirebaseKt.Configure()
+        
         return MainKt.MainViewController()
     }
 
