@@ -82,3 +82,17 @@ app/keys/
 .externalNativeBuild
 .cxx
 /.kotlin/
+/.claude/settings.local.json
+/.swiftpm/xcode/package.xcworkspace/xcuserdata/razotron.xcuserdatad/xcschemes/xcschememanagement.plist
+/.swiftpm/xcode/package.xcworkspace/xcuserdata/razotron.xcuserdatad/UserInterfaceState.xcuserstate
+/.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+/.swiftpm/xcode/xcuserdata/razotron.xcuserdatad/xcschemes/xcschememanagement.plist
+/kotlin-js-store/wasm/yarn.lock
+/kotlin-js-store/yarn.lock
+/sample/iosApp/iosApp.xcodeproj/xcuserdata/razotron.xcuserdatad/xcschemes/iosApp.xcscheme
+/sample/iosApp/iosApp.xcodeproj/xcuserdata/razotron.xcuserdatad/xcschemes/xcschememanagement.plist
+/sample/iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/razotron.xcuserdatad/xcschemes/xcschememanagement.plist
+/sample/iosApp/iosApp.xcodeproj/project.xcworkspace/xcuserdata/razotron.xcuserdatad/UserInterfaceState.xcuserstate
+/remote-config/src/interop/FirebaseCore.def
+/remote-config/src/interop/RemoteConfig.def
+/CLAUDE.md
