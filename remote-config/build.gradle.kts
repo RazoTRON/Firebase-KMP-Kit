@@ -18,7 +18,7 @@ val properties = Properties().apply {
     load(FileInputStream(rootProject.file("local.properties")))
 }
 
-group = "com.firebasekit.remoteconfig"
+group = "com.firebasekit"
 version = "0.0.1"
 
 kotlin {

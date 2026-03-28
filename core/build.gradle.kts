@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.android.kmp.library)
 }
 
-group = "com.firebasekit.core"
+group = "com.firebasekit"
 version = "0.0.1"
 
 kotlin {
