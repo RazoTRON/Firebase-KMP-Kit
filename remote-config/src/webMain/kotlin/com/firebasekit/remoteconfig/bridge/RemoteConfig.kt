@@ -1,12 +1,26 @@
-@file:JsModule("firebase/remote-config")
-
 package com.firebasekit.remoteconfig.bridge
 
+import com.firebasekit.core.app
+import com.firebasekit.core.utils.awaitJs
 import kotlin.js.JsAny
-import kotlin.js.JsModule
-import kotlin.js.Promise
 
-external fun getRemoteConfig(app: JsAny): JsAny
-external fun fetchAndActivate(remoteConfig: JsAny): Promise<JsAny>
-external fun getValue(remoteConfig: JsAny, key: String): JsAny?
-external fun getAll(remoteConfig: JsAny): JsAny?
+interface RemoteConfig {
+    suspend fun fetchAndActivate()
+    fun getValue(key: String): JsAny?
+    fun getAll(): JsAny?
+}
+
+class RemoteConfigBridge : RemoteConfig {
+    private val instance: JsAny by lazy {
+        val currentApp = app ?: throw Exception("Firebase app is not initialized")
+        getRemoteConfig(currentApp)
+    }
+
+    override suspend fun fetchAndActivate() {
+        fetchAndActivate(instance).awaitJs()
+    }
+
+    override fun getValue(key: String): JsAny? = getValue(instance, key)
+
+    override fun getAll(): JsAny? = getAll(instance)
+}

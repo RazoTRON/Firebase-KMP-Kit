@@ -79,6 +79,15 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.test)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.ktor.client.mock)
+        }
+
+        androidUnitTest.dependencies {
+            implementation(libs.mockk)
         }
     }
 

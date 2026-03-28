@@ -1,7 +1,6 @@
 package com.firebasekit.remoteconfig
 
 import com.firebasekit.core.Firebase
-import com.firebasekit.native.FIRRemoteConfig
 import com.firebasekit.native.FIRRemoteConfigFetchAndActivateStatus
 import com.firebasekit.native.FIRRemoteConfigFetchStatus
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -14,13 +13,10 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigIos
+    get() = FirebaseRemoteConfigIos()
 
 @OptIn(ExperimentalForeignApi::class)
-object FirebaseRemoteConfigIos : FirebaseRemoteConfig {
-    private val remoteConfig: FIRRemoteConfig
-        get() = FIRRemoteConfig.remoteConfig()
-
+class FirebaseRemoteConfigIos(private val remoteConfig: RemoteConfig = FIRRemoteConfigBridge()) : FirebaseRemoteConfig {
     override suspend fun fetchAndActivate() {
         suspendCancellableCoroutine { cont ->
             remoteConfig.fetchAndActivateWithCompletionHandler { status, error ->
@@ -35,9 +31,9 @@ object FirebaseRemoteConfigIos : FirebaseRemoteConfig {
 
     override fun getBoolean(key: String): Boolean = remoteConfig.configValueForKey(key).boolValue
     override fun getString(key: String): String = remoteConfig.configValueForKey(key).stringValue
-    override fun getLong(key: String): Long = remoteConfig.configValueForKey(key).numberValue.longValue
-    override fun getInt(key: String): Int = remoteConfig.configValueForKey(key).numberValue.intValue
-    override fun getDouble(key: String): Double? = remoteConfig.configValueForKey(key).numberValue.doubleValue
+    override fun getLong(key: String): Long = remoteConfig.configValueForKey(key).longValue
+    override fun getInt(key: String): Int = remoteConfig.configValueForKey(key).intValue
+    override fun getDouble(key: String): Double? = remoteConfig.configValueForKey(key).doubleValue
         .takeIf { it.isFinite() }
 
     @Suppress("UNCHECKED_CAST")
@@ -58,4 +54,3 @@ object FirebaseRemoteConfigIos : FirebaseRemoteConfig {
     fun getMinimumFetchInterval() = remoteConfig.configSettings.minimumFetchInterval
         .toDuration(DurationUnit.SECONDS).inWholeSeconds
 }
-

@@ -25,17 +25,19 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigJvm
+    get() {
+        val client = HttpClient(Java) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
 
-object FirebaseRemoteConfigJvm : FirebaseRemoteConfig {
+        return FirebaseRemoteConfigJvm(client)
+    }
+
+class FirebaseRemoteConfigJvm(private val client: HttpClient) : FirebaseRemoteConfig {
     private val configValues = mutableMapOf<String, String>()
     private val defaultRefreshInterval = 60.minutes
-
-    private val client = HttpClient(Java) {
-        install(ContentNegotiation) {
-            json(Json { ignoreUnknownKeys = true })
-        }
-    }
 
     private var installation: InstallationResponse? = null
 

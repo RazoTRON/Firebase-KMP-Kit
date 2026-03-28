@@ -13,11 +13,12 @@ import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
 actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigAndroid
+    get() = FirebaseRemoteConfigAndroid()
 
-object FirebaseRemoteConfigAndroid : FirebaseRemoteConfig {
-    private val instance: AndroidRemoteConfig
-        get() = AndroidFirebase.remoteConfig
+class FirebaseRemoteConfigAndroid(
+    remoteConfig: AndroidRemoteConfig = AndroidFirebase.remoteConfig,
+) : FirebaseRemoteConfig {
+    private val instance: AndroidRemoteConfig by lazy { remoteConfig }
 
     override suspend fun fetchAndActivate() {
         instance.fetchAndActivate().awaitCompletion()
