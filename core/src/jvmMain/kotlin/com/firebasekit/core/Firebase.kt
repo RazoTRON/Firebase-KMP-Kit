@@ -22,16 +22,16 @@ fun Firebase.initialize(
     )
 }
 
-internal object FirebaseJvm {
-    internal var apiKey: String? = null
+object FirebaseJvm {
+    var apiKey: String? = null
         private set
-    internal var projectId: String? = null
+    var projectId: String? = null
         private set
-    internal var appId: String? = null
+    var appId: String? = null
         private set
-    internal var interval: Duration? = null
+    var interval: Duration? = null
         private set
-    internal var fid: String? = null
+    var fid: String? = null
         private set
 
     internal fun initialize(

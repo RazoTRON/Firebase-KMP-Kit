@@ -32,6 +32,7 @@ dependencyResolutionManagement {
 
 includeBuild("publication")
 
+include(":core")
 include(":remote-config")
 include(":sample:shared")
 include(":sample:androidApp")

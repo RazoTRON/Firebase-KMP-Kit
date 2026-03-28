@@ -4,7 +4,8 @@ import com.firebasekit.core.bridge.initializeApp
 import com.firebasekit.core.utils.createConfiguration
 import kotlin.js.JsAny
 
-internal var app: JsAny? = null
+var app: JsAny? = null
+    private set
 
 fun Firebase.initialize(
     apiKey: String,

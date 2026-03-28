@@ -44,9 +44,6 @@ kotlin {
             create("RemoteConfig") {
                 defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
             }
-            create("FirebaseCore") {
-                defFile(project.layout.projectDirectory.file("src/interop/FirebaseCore.def"))
-            }
         }
     }
     js {
@@ -57,6 +54,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(projects.core)
+
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             api(libs.kotlinx.datetime)
@@ -145,10 +144,6 @@ fun Project.generateFirebaseConfigDefFiles() {
             // Generate RemoteConfig.def
             val remoteConfigDefFile = File(interopDir.get().asFile, "RemoteConfig.def")
             remoteConfigDefFile.writeText(defFileContent("FirebaseRemoteConfig"))
-
-            // Generate FirebaseCore.def
-            val firebaseCoreDefFile = File(interopDir.get().asFile, "FirebaseCore.def")
-            firebaseCoreDefFile.writeText(defFileContent("FirebaseCore"))
         }
 
         private fun defFileContent(fileName: String): String {
@@ -169,7 +164,7 @@ fun Project.generateFirebaseConfigDefFiles() {
     }
 
     tasks.withType<CInteropProcess>()
-        .matching { it.name.startsWith("cinteropRemoteConfig") || it.name.startsWith("cinteropFirebaseCore") }
+        .matching { it.name.startsWith("cinteropRemoteConfig") }
         .configureEach {
             dependsOn(tasks.named(taskName))
         }
