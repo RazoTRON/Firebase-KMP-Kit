@@ -1,14 +1,15 @@
 package extension
 
-import extension.publish.publishAndroidLibrary
-import extension.publish.publishIosLibrary
+import extension.publish.publishAndroidLibraryToGitHub
+import extension.publish.publishIosLibraryToGitHub
 import org.gradle.api.Project
 
-fun Project.publishLibrary(
+fun Project.publishLibraryToGitHub(
     groupId: String,
     version: String,
-    projectId: String,
-    gitlabAccesToken: String,
+    owner: String,
+    repo: String,
+    githubToken: String,
     httpGitUrl: String,
     branch: String,
     projectName: String,
@@ -17,18 +18,20 @@ fun Project.publishLibrary(
     developerName: String = "",
     contactEmail: String = ""
 ) {
-    publishIosLibrary(
-        version = version,
-        projectId = projectId,
-        gitlabAccessToken = gitlabAccesToken,
-        branch = branch
-    )
+//    publishIosLibraryToGitHub(
+//        version = version,
+//        owner = owner,
+//        repo = repo,
+//        githubToken = githubToken,
+//        branch = branch
+//    )
 
-    publishAndroidLibrary(
+    publishAndroidLibraryToGitHub(
         groupId = groupId,
         version = version,
-        projectId = projectId,
-        gitlabAccesToken = gitlabAccesToken,
+        owner = owner,
+        repo = repo,
+        githubToken = githubToken,
         httpGitUrl = httpGitUrl,
         projectName = projectName,
         projectDescription = projectDescription,
@@ -37,10 +40,10 @@ fun Project.publishLibrary(
         contactEmail = contactEmail
     )
 
-    tasks.register("publishLibrary") {
+    tasks.register("publishLibraryToGitHub") {
         group = "publishing"
         dependsOn("buildLibrary")
-//        dependsOn("publishIosLibrary")
-        dependsOn("publishAndroidLibrary")
+//        dependsOn("publishIosLibraryToGitHub")
+        dependsOn("publishAndroidLibraryToGitHub")
     }
 }

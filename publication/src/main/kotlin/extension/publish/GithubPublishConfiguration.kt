@@ -2,43 +2,23 @@ package extension.publish
 
 import gradle.kotlin.dsl.accessors._fd942f86fa329c352a3fb0ff6494f851.publishing
 import org.gradle.api.Project
-import org.gradle.api.credentials.HttpHeaderCredentials
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.authentication.http.HttpHeaderAuthentication
 import org.gradle.kotlin.dsl.assign
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.credentials
 import org.gradle.kotlin.dsl.withType
 
-fun Project.publishAndroidLibrary(
+fun Project.githubPublishConfiguration(
     groupId: String,
     version: String,
-    projectId: String,
-    gitlabAccesToken: String,
-    httpGitUrl: String,
     projectName: String,
     projectDescription: String,
-    developerId: String = "",
-    developerName: String = "",
-    contactEmail: String = ""
+    owner: String,
+    repo: String,
+    httpGitUrl: String,
+    developerId: String,
+    developerName: String,
+    contactEmail: String
 ) {
     publishing {
-        publications {
-            repositories {
-                maven {
-                    name = "GitLab"
-                    url = project.uri("https://gitlab.com/api/v4/projects/$projectId/packages/maven")
-                    credentials(HttpHeaderCredentials::class) {
-                        name = "Authorization"
-                        value = "Bearer $gitlabAccesToken"
-                    }
-                    authentication {
-                        create("header", HttpHeaderAuthentication::class)
-                    }
-                }
-            }
-        }
-
         publications
             .withType<MavenPublication>()
             .configureEach {
@@ -48,7 +28,7 @@ fun Project.publishAndroidLibrary(
                 pom {
                     name.set(projectName)
                     description.set(projectDescription)
-                    url.set("https://gitlab.com/api/v4/projects/$projectId/packages/maven")
+                    url.set("https://github.com/$owner/$repo")
 
                     licenses {
                         license {
@@ -60,16 +40,16 @@ fun Project.publishAndroidLibrary(
                     val gitUrl = httpGitUrl.substringAfter("https://")
 
                     scm {
-                        connection = "scm:git:git://$gitUrl"
+                        connection.assign("scm:git:git://$gitUrl")
                         developerConnection = "scm:git:ssh://$gitUrl"
                         url = "https://$gitUrl"
                     }
 
-                    val url = gitUrl.substringBefore(".git")
+                    val repoUrl = gitUrl.substringBefore(".git")
 
                     issueManagement {
-                        this.system = "GitLab"
-                        this.url = "https://$url/-/issues"
+                        this.system = "GitHub"
+                        this.url = "https://$repoUrl/issues"
                     }
 
                     developers {
@@ -81,10 +61,5 @@ fun Project.publishAndroidLibrary(
                     }
                 }
             }
-    }
-
-    tasks.register("publishAndroidLibrary") {
-        group = "publishing"
-        dependsOn("publishAllPublicationsToGitLabRepository")
     }
 }
