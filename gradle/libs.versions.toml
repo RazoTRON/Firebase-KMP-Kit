@@ -12,6 +12,7 @@ kotlinx-datetime = "0.7.1"
 ktor = "3.1.1"
 google-services = "4.4.4"
 buildconfig = "6.0.9"
+node-gradle = "7.1.0"
 mockk = "1.14.2"
 
 [libraries]
@@ -53,3 +54,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
+node-gradle = { id = "com.github.node-gradle.node", version.ref = "node-gradle" }
