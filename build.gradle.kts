@@ -9,3 +9,13 @@ plugins {
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.google.services).apply(false)
 }
+
+subprojects {
+    if (project.path.startsWith(":sample")) {
+        pluginManager.withPlugin("maven-publish") {
+            tasks.withType<AbstractPublishToMaven>().configureEach {
+                enabled = false
+            }
+        }
+    }
+}
