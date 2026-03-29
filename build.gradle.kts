@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm).apply(false)
     alias(libs.plugins.kotlinx.serialization).apply(false)
     alias(libs.plugins.google.services).apply(false)
+    alias(libs.plugins.node.gradle).apply(false)
 }
 
 subprojects {
@@ -20,6 +21,12 @@ subprojects {
     }
 }
 
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 // Disable Google Services tasks when google-services.json is absent (e.g. CI / JitPack)
 gradle.taskGraph.whenReady {
     allTasks
