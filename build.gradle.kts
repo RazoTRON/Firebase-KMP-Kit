@@ -19,3 +19,14 @@ subprojects {
         }
     }
 }
+
+// Disable Google Services tasks when google-services.json is absent (e.g. CI / JitPack)
+gradle.taskGraph.whenReady {
+    allTasks
+        .filter { task ->
+            task.project.path.startsWith(":sample") &&
+                task.name.contains("GoogleServices", ignoreCase = true) &&
+                !task.project.file("google-services.json").exists()
+        }
+        .forEach { it.enabled = false }
+}
