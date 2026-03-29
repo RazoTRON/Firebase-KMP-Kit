@@ -1,6 +1,6 @@
 import extension.buildLibrary
+import extension.publish.githubPublishConfiguration
 import extension.publish.publishAndroidLibraryToMavenLocal
-import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import java.io.FileInputStream
@@ -117,16 +117,17 @@ generateFirebaseConfigDefFiles()
 
 buildLibrary()
 
-publishLibrary(
-    gitlabAccesToken = properties.getProperty("gitubAccessToken"),
-    projectId = "000000000",
-    branch = "dev",
+githubPublishConfiguration(
     httpGitUrl = "https://github.com/RazoTRON/Firebase-KMP-Kit",
     contactEmail = "vmihalatiuk@gmail.com",
+    owner = "RazoTRON",
+    repo = "Firebase-KMP-Kit",
     groupId = project.group.toString(),
     version = project.version.toString(),
     projectName = project.name,
-    projectDescription = project.description.toString()
+    projectDescription = project.description.toString(),
+    developerId = "RazoTRON",
+    developerName = "Vladislav Mihalatiuk"
 )
 
 publishAndroidLibraryToMavenLocal(

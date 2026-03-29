@@ -9,7 +9,6 @@ import org.gradle.api.Action
 
 fun Project.publishIosLibrary(version: String, gitlabAccessToken: String, projectId: String, branch: String) {
     tasks.register("createGitLabRelease") {
-        mustRunAfter("fetchChangesFromRemote")
         group = "publishing"
         description = "Creates a release on GitLab using the GitLab API."
 

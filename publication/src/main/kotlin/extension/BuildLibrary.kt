@@ -59,7 +59,6 @@ fun Project.buildLibrary() {
 
     tasks.register("buildLibrary") {
         group = "build"
-        mustRunAfter("fetchChangesFromRemote")
         dependsOn("build")
         dependsOn("buildIosLibrary")
     }
