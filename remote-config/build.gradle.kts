@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.node.gradle)
     id("publication")
 }
 
@@ -20,7 +19,7 @@ val properties = Properties().apply {
 }
 
 group = "com.firebasekit"
-version = "0.0.5"
+version = "0.0.6"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -112,11 +111,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-}
-
-node {
-    download.set(true)
-    version.set("22.14.0")
 }
 
 generateFirebaseConfigDefFiles()
