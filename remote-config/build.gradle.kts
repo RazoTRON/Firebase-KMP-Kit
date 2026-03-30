@@ -19,7 +19,7 @@ val properties = Properties().apply {
 }
 
 group = "com.firebasekit"
-version = "0.0.6"
+version = "0.0.7"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")

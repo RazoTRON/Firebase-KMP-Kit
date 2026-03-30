@@ -2,7 +2,6 @@ rootProject.name = "Firebase-Kit-KMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
-    includeBuild("convention-plugins")
     repositories {
         google {
             content {
