@@ -2,6 +2,7 @@ rootProject.name = "Firebase-Kit-KMP"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
+    includeBuild("convention-plugins")
     repositories {
         google {
             content {
@@ -34,7 +35,7 @@ includeBuild("publication")
 
 include(":core")
 include(":remote-config")
-include(":sample:shared")
-include(":sample:androidApp")
-include(":sample:desktopApp")
-include(":sample:webApp")
+//include(":sample:shared")
+//include(":sample:androidApp")
+//include(":sample:desktopApp")
+//include(":sample:webApp")
