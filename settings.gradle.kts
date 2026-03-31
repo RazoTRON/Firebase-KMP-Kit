@@ -30,11 +30,17 @@ dependencyResolutionManagement {
     }
 }
 
+val isJitPack = System.getenv("JITPACK")?.toBoolean() ?: false
+
+includeBuild("build-logic")
 includeBuild("publication")
 
 include(":core")
 include(":remote-config")
-//include(":sample:shared")
-//include(":sample:androidApp")
-//include(":sample:desktopApp")
-//include(":sample:webApp")
+
+if (isJitPack.not()) {
+    include(":sample:shared")
+    include(":sample:androidApp")
+    include(":sample:desktopApp")
+    include(":sample:webApp")
+}
