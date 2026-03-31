@@ -1,56 +1,38 @@
 import extension.buildLibrary
+import extension.defaultTargets
 import extension.publish.githubPublishConfiguration
 import extension.publish.publishAndroidLibraryToMavenLocal
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import java.io.FileInputStream
-import java.util.Properties
-import org.gradle.api.Project
+import task.generateDefFiles
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.kmp.library)
-    alias(libs.plugins.kotlinx.serialization)
+    id("build-config")
     id("publication")
-}
-
-val properties = Properties().apply {
-    load(FileInputStream(rootProject.file("local.properties")))
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 group = "com.firebasekit"
-version = "0.0.7"
+version = "0.0.8"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
 
-    jvm()
-    androidTarget {
-        publishLibraryVariants("release")
-    }
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "FirebaseKitRemoteConfig"
-            binaryOption("bundleId", "FirebaseKitRemoteConfig")
-            xcf.add(this)
-            isStatic = true
-        }
+    defaultTargets(
+        iOSConfig = {
+            it.binaries.framework {
+                baseName = "FirebaseKitRemoteConfig"
+                binaryOption("bundleId", "FirebaseKitRemoteConfig")
+                xcf.add(this)
+                isStatic = true
+            }
 
-        it.compilations["main"].cinterops {
-            create("RemoteConfig") {
-                defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
+            it.compilations["main"].cinterops {
+                create("RemoteConfig") {
+                    defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
+                }
             }
         }
-    }
-    js {
-        browser()
-        useEsModules()
-    }
-    wasmJs { browser() }
+    )
 
     sourceSets {
         commonMain.dependencies {
@@ -74,7 +56,7 @@ kotlin {
         }
 
         webMain.dependencies {
-            implementation(devNpm("firebase", "10.13.2"))
+            implementation(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
         }
 
         commonTest.dependencies {
@@ -90,30 +72,9 @@ kotlin {
             implementation(libs.mockk)
         }
     }
-
-    // https://kotlinlang.org/docs/native-objc-interop.html#export-of-kdoc-comments-to-generated-objective-c-headers
-    targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-        compilations["main"]
-            .compilerOptions.options.freeCompilerArgs
-            .add("-Xexport-kdoc")
-    }
 }
 
-android {
-    namespace = project.group.toString()
-    compileSdk = 36
-
-    defaultConfig {
-        minSdk = 23
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-}
-
-generateFirebaseConfigDefFiles()
+generateDefFiles("RemoteConfig")
 
 buildLibrary()
 
@@ -136,50 +97,3 @@ publishAndroidLibraryToMavenLocal(
     projectName = project.name,
     projectDescription = project.name
 )
-
-fun Project.generateFirebaseConfigDefFiles() {
-    val taskName = "generateFirebaseConfigDefFiles"
-
-    abstract class GenerateFirebaseConfigDefFilesTask : DefaultTask() {
-        @get:Input
-        abstract val packageName: Property<String>
-
-        @get:OutputDirectory
-        abstract val interopDir: DirectoryProperty
-
-        @TaskAction
-        fun generate() {
-            interopDir.get().asFile.mkdirs()
-
-            // Generate RemoteConfig.def
-            val remoteConfigDefFile = File(interopDir.get().asFile, "RemoteConfig.def")
-            remoteConfigDefFile.writeText(defFileContent("FirebaseRemoteConfig"))
-        }
-
-        private fun defFileContent(fileName: String): String {
-            val libsDir = interopDir.dir("libs").get().asFile
-
-            return """
-                       language = Objective-C
-                       package = ${packageName.get()}
-                       headers = ${File(libsDir, "$fileName.h").absolutePath}
-                   """.trimIndent()
-        }
-    }
-
-    tasks.register<GenerateFirebaseConfigDefFilesTask>(taskName) {
-        packageName.set("com.firebasekit.native")
-        interopDir.set(project.layout.projectDirectory.dir("src/interop"))
-        group = "interop"
-    }
-
-    tasks.withType<CInteropProcess>()
-        .matching { it.name.startsWith("cinteropRemoteConfig") }
-        .configureEach {
-            dependsOn(tasks.named(taskName))
-        }
-
-    tasks.named("build") {
-        dependsOn(tasks.named(taskName))
-    }
-}
