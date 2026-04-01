@@ -39,7 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.remoteConfig)
+            api(projects.remoteConfig)
 
             api(libs.compose.runtime)
             api(libs.compose.ui)

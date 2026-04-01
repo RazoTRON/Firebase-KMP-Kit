@@ -18,7 +18,6 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.sample.shared)
-            implementation(projects.remoteConfig)
         }
     }
 }

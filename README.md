@@ -1,8 +1,27 @@
-# Firebase KMP Kit
+# 🔥 Firebase KMP Kit
+![Static Badge](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20JS%20%7C%20WASM%20%7C%20Desktop-brightgreen)
+![Static Badge](https://img.shields.io/badge/Kotlin-2.3.0-violet)
+[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
-A **Kotlin Multiplatform** library that provides **Firebase Remote Config SDK** across all major platforms **(Android, iOS, JS, WASM, Desktop)** through a single, unified API.
+A **Kotlin Multiplatform** library that provides **Firebase Services** across all major platforms **(Android, iOS, JS, WASM, Desktop)** through a single, unified API.
+
+## Characteristics
+
+- 🚫 **No CocoaPods** under the hood — implemented entirely with Kotlin/Native interop.
+- 🌐 Supports all major Kotlin Multiplatform targets: `Android`, `iOS`, `JS`, `WASM`, and `Desktop`.
+- ⚙️ API fully aligned with the official Firebase SDK.
+- 🔄 Built with **Kotlin Coroutines** and **Flow** for reactive and asynchronous programming.
+- 🔗 Uses **Kotlinx Serialization** for consistent cross-platform JSON handling.
+- ✅ Comprehensive test coverage across all supported platforms.
 
 ## Supported Targets
+
+| Module          | Android | iOS | JS | Wasm | Desktop | Description                                                   |
+|-----------------|:-------:|:---:|:--:|:----:|:-------:|---------------------------------------------------------------|
+| `core`          |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                    |
+| `remote-config` |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Remote Config |
+
+### KMP Target Names
 
 | Platform | Target |
 |----------|--------|
@@ -19,7 +38,7 @@ A **Kotlin Multiplatform** library that provides **Firebase Remote Config SDK** 
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("com.firebasekit.remoteconfig:remote-config:0.0.1")
+            implementation("io.github.razotron.Firebase-KMP-Kit:remote-config:0.1.3")
         }
     }
 }

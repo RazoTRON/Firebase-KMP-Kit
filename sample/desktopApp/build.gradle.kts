@@ -8,7 +8,6 @@ plugins {
 
 dependencies {
     implementation(projects.sample.shared)
-    implementation(projects.remoteConfig)
 }
 
 compose.desktop {

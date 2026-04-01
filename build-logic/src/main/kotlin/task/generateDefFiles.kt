@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import java.io.File
 
 
-fun Project.generateDefFiles(fileName: String) {
+fun Project.generateDefFiles(fileName: String, interopFileName: String) {
     val taskName = "generate${fileName}DefFiles"
 
     abstract class GenerateFirebaseCoreDefFilesTask : DefaultTask() {
@@ -22,6 +22,9 @@ fun Project.generateDefFiles(fileName: String) {
 
         @get:Input
         abstract val defFileName: Property<String>
+
+        @get:Input
+        abstract val libsFileName: Property<String>
 
         @get:OutputDirectory
         abstract val interopDir: DirectoryProperty
@@ -32,7 +35,7 @@ fun Project.generateDefFiles(fileName: String) {
 
             // Generate FirebaseCore.def
             val defFile = File(interopDir.get().asFile, "${defFileName.get()}.def")
-            defFile.writeText(defFileContent(defFileName.get()))
+            defFile.writeText(defFileContent(libsFileName.get()))
         }
 
         private fun defFileContent(fileName: String): String {
@@ -41,7 +44,7 @@ fun Project.generateDefFiles(fileName: String) {
             return """
                        language = Objective-C
                        package = ${packageName.get()}
-                       headers = ${File(libsDir, "$fileName.h").absolutePath}
+                       headers = ${File(libsDir, fileName).absolutePath}
                    """.trimIndent()
         }
     }
@@ -49,6 +52,7 @@ fun Project.generateDefFiles(fileName: String) {
     tasks.register<GenerateFirebaseCoreDefFilesTask>(taskName) {
         packageName.set("com.firebasekit.native")
         defFileName.set(fileName)
+        libsFileName.set(interopFileName)
         interopDir.set(project.layout.projectDirectory.dir("src/interop"))
         group = "interop"
     }

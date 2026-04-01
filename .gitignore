@@ -97,3 +97,5 @@ app/keys/
 /remote-config/src/interop/RemoteConfig.def
 /CLAUDE.md
 /core/src/interop/FirebaseCore.def
+/keys/
+/AGENTS.md

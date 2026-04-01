@@ -31,7 +31,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.remoteConfig)
     implementation(projects.sample.shared)
 
     implementation(libs.androidx.activityCompose)

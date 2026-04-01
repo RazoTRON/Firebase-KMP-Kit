@@ -21,5 +21,8 @@ fun KotlinMultiplatformExtension.defaultTargets(iOSConfig: ((KotlinNativeTarget)
         browser()
         useEsModules()
     }
-    wasmJs { browser() }
+
+    wasmJs {
+        browser()
+    }
 }

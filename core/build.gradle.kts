@@ -1,11 +1,13 @@
 import extension.defaultTargets
+import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import task.generateDefFiles
 
 plugins {
     id("build-config")
+    id("publication")
 }
-version = "0.0.8"
+version = "0.1.3"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitCore")
@@ -33,9 +35,14 @@ kotlin {
         }
 
         webMain.dependencies {
-            implementation(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
+            api(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
         }
     }
 }
 
-generateDefFiles("FirebaseCore")
+generateDefFiles(
+    fileName = "FirebaseCore",
+    interopFileName = "FirebaseCore.h"
+)
+
+publishLibrary(artifactId = "core")

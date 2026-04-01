@@ -1,7 +1,6 @@
 import extension.buildLibrary
 import extension.defaultTargets
-import extension.publish.githubPublishConfiguration
-import extension.publish.publishAndroidLibraryToMavenLocal
+import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import task.generateDefFiles
 
@@ -11,8 +10,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-group = "com.firebasekit"
-version = "0.0.8"
+version = "0.1.3"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -56,7 +54,7 @@ kotlin {
         }
 
         webMain.dependencies {
-            implementation(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
+            api(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
         }
 
         commonTest.dependencies {
@@ -74,26 +72,11 @@ kotlin {
     }
 }
 
-generateDefFiles("RemoteConfig")
+generateDefFiles(
+    fileName = "RemoteConfig",
+    interopFileName = "FIRRemoteConfig.h"
+)
 
 buildLibrary()
 
-githubPublishConfiguration(
-    httpGitUrl = "https://github.com/RazoTRON/Firebase-KMP-Kit",
-    contactEmail = "vmihalatiuk@gmail.com",
-    owner = "RazoTRON",
-    repo = "Firebase-KMP-Kit",
-    groupId = project.group.toString(),
-    version = project.version.toString(),
-    projectName = project.name,
-    projectDescription = project.description.toString(),
-    developerId = "RazoTRON",
-    developerName = "Vladislav Mihalatiuk"
-)
-
-publishAndroidLibraryToMavenLocal(
-    groupId = project.group.toString(),
-    version = project.version.toString(),
-    projectName = project.name,
-    projectDescription = project.name
-)
+publishLibrary(artifactId = "remote-config")
