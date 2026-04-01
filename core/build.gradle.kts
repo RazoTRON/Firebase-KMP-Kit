@@ -7,7 +7,7 @@ plugins {
     id("build-config")
     id("publication")
 }
-version = "0.1.3"
+version = "0.1.4"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitCore")
@@ -25,6 +25,11 @@ kotlin {
                 create("FirebaseCore") {
                     defFile(project.layout.projectDirectory.file("src/interop/FirebaseCore.def"))
                 }
+            }
+        },
+        jsConfig = {
+            compilations["main"].packageJson {
+                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.remoteConfigs.get()))
             }
         }
     )

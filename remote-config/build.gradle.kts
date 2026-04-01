@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-version = "0.1.3"
+version = "0.1.4"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -28,6 +28,11 @@ kotlin {
                 create("RemoteConfig") {
                     defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
                 }
+            }
+        },
+        jsConfig = {
+            compilations["main"].packageJson {
+                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.remoteConfigs.get()))
             }
         }
     )
