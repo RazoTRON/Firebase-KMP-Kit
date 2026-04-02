@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-version = "0.1.4"
+version = "0.1.5"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -32,7 +32,7 @@ kotlin {
         },
         jsConfig = {
             compilations["main"].packageJson {
-                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.remoteConfigs.get()))
+                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.get()))
             }
         }
     )
@@ -59,7 +59,7 @@ kotlin {
         }
 
         webMain.dependencies {
-            api(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
+            api(devNpm("firebase", libs.versions.firebase.webNpm.get()))
         }
 
         commonTest.dependencies {
