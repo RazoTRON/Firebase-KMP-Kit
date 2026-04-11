@@ -1,8 +1,8 @@
 package com.firebasekit.remoteconfig
 
-import com.firebasekit.native.FIRRemoteConfig
-import com.firebasekit.native.FIRRemoteConfigSettings
 import kotlinx.cinterop.ExperimentalForeignApi
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfig
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigSettings
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 

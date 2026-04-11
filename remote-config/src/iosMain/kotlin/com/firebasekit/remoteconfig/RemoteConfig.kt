@@ -1,12 +1,12 @@
 package com.firebasekit.remoteconfig
 
-import com.firebasekit.native.FIRRemoteConfig
-import com.firebasekit.native.FIRRemoteConfigFetchAndActivateStatus
-import com.firebasekit.native.FIRRemoteConfigFetchStatus
-import com.firebasekit.native.FIRRemoteConfigSettings
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDate
 import platform.Foundation.NSError
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfig
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchAndActivateStatus
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigSettings
 
 @OptIn(ExperimentalForeignApi::class)
 interface RemoteConfig {

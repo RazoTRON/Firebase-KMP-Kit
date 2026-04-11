@@ -13,6 +13,7 @@ plugins {
 
 allprojects {
     repositories {
+        maven("https://packages.jetbrains.team/maven/p/kt/dev")
         google()
         mavenCentral()
     }

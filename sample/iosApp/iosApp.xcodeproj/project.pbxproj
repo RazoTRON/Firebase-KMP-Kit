@@ -3,12 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8A1A9E1F2F6728BE008859DC /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8A1A9E1E2F6728BE008859DC /* FirebaseCore */; };
-		8A1A9E212F6728BE008859DC /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 8A1A9E202F6728BE008859DC /* FirebaseRemoteConfig */; };
+		075C9C24CFC4061CEA110637 /* KotlinMultiplatformLinkedPackage in Frameworks */ = {isa = PBXBuildFile; productRef = ADFC70540844277B1880848F /* KotlinMultiplatformLinkedPackage */; };
 		8A96FB402F7049330072E03D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8A96FB3F2F7049330072E03D /* GoogleService-Info.plist */; };
 		A93A953B29CC810C00F8E227 /* iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A953A29CC810C00F8E227 /* iosApp.swift */; };
 		A93A953F29CC810D00F8E227 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93A953E29CC810D00F8E227 /* Assets.xcassets */; };
@@ -28,8 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A1A9E1F2F6728BE008859DC /* FirebaseCore in Frameworks */,
-				8A1A9E212F6728BE008859DC /* FirebaseRemoteConfig in Frameworks */,
+				075C9C24CFC4061CEA110637 /* KotlinMultiplatformLinkedPackage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +94,9 @@
 			dependencies = (
 			);
 			name = iosApp;
+			packageProductDependencies = (
+				ADFC70540844277B1880848F /* KotlinMultiplatformLinkedPackage */,
+			);
 			productName = iosApp;
 			productReference = A93A953729CC810C00F8E227 /* sample.app */;
 			productType = "com.apple.product-type.application";
@@ -124,7 +125,7 @@
 			);
 			mainGroup = A93A952E29CC810C00F8E227;
 			packageReferences = (
-				8A1A9E1D2F6728BE008859DC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F634DC1CA5A9D8245CF06E52 /* XCLocalSwiftPackageReference "KotlinMultiplatformLinkedPackage" */,
 			);
 			productRefGroup = A93A953829CC810C00F8E227 /* Products */;
 			projectDirPath = "";
@@ -368,27 +369,17 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		8A1A9E1D2F6728BE008859DC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.10.0;
-			};
+/* Begin XCLocalSwiftPackageReference section */
+		F634DC1CA5A9D8245CF06E52 /* XCLocalSwiftPackageReference "KotlinMultiplatformLinkedPackage" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = KotlinMultiplatformLinkedPackage;
 		};
-/* End XCRemoteSwiftPackageReference section */
+/* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8A1A9E1E2F6728BE008859DC /* FirebaseCore */ = {
+		ADFC70540844277B1880848F /* KotlinMultiplatformLinkedPackage */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8A1A9E1D2F6728BE008859DC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseCore;
-		};
-		8A1A9E202F6728BE008859DC /* FirebaseRemoteConfig */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8A1A9E1D2F6728BE008859DC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseRemoteConfig;
+			productName = KotlinMultiplatformLinkedPackage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

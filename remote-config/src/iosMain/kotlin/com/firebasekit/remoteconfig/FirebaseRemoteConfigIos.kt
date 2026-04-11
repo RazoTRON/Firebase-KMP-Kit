@@ -1,14 +1,14 @@
 package com.firebasekit.remoteconfig
 
 import com.firebasekit.core.Firebase
-import com.firebasekit.native.FIRRemoteConfigFetchAndActivateStatus
-import com.firebasekit.native.FIRRemoteConfigFetchStatus
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.json.Json
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchAndActivateStatus
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 

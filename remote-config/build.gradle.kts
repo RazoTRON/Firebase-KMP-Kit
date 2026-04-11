@@ -2,7 +2,6 @@ import extension.buildLibrary
 import extension.defaultTargets
 import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import task.generateDefFiles
 
 plugins {
     id("build-config")
@@ -10,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-version = "0.1.5"
+version = "0.2.0-rc1"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -23,12 +22,6 @@ kotlin {
                 xcf.add(this)
                 isStatic = true
             }
-
-            it.compilations["main"].cinterops {
-                create("RemoteConfig") {
-                    defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
-                }
-            }
         },
         jsConfig = {
             compilations["main"].packageJson {
@@ -36,6 +29,28 @@ kotlin {
             }
         }
     )
+
+    swiftPMDependencies {
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = from("12.9.0"),
+            products = listOf(
+                product("FirebaseCore"),
+                product("FirebaseRemoteConfig")
+            ),
+            importedClangModules = listOf(
+                "FirebaseCore",
+                "FirebaseRemoteConfigInternal",
+            ),
+        )
+    }
+
+
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -76,11 +91,6 @@ kotlin {
         }
     }
 }
-
-generateDefFiles(
-    fileName = "RemoteConfig",
-    interopFileName = "FIRRemoteConfig.h"
-)
 
 buildLibrary()
 

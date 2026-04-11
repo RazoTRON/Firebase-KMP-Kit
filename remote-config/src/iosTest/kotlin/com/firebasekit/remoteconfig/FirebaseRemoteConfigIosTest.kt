@@ -1,11 +1,11 @@
 package com.firebasekit.remoteconfig
 
-import com.firebasekit.native.FIRRemoteConfigFetchAndActivateStatus
-import com.firebasekit.native.FIRRemoteConfigFetchStatus
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSDate
 import platform.Foundation.NSError
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchAndActivateStatus
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

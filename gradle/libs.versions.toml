@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.3.20"
+kotlin = "2.4.0-Beta2-25"
 compose-multiplatform = "1.10.3"
 material3 = "1.10.0-alpha05"
 agp = "8.13.2"
@@ -50,7 +50,7 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # GRADLE
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "conventionKotlin" }
+kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "conventionKotlin" }
 vanniktech-gradle = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "vanniktech-gradle" }
 

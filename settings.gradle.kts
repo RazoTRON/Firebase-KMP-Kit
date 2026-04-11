@@ -11,6 +11,7 @@ pluginManagement {
                 includeGroupByRegex("android.*")
             }
         }
+        maven("https://packages.jetbrains.team/maven/p/kt/dev")
         gradlePluginPortal()
         mavenCentral()
     }
@@ -26,6 +27,7 @@ dependencyResolutionManagement {
                 includeGroupByRegex("android.*")
             }
         }
+        maven("https://packages.jetbrains.team/maven/p/kt/dev")
         mavenCentral()
     }
 }

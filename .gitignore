@@ -99,3 +99,4 @@ app/keys/
 /core/src/interop/FirebaseCore.def
 /keys/
 /AGENTS.md
+/.swiftpm-locks/
