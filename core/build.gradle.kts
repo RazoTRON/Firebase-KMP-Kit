@@ -1,14 +1,14 @@
+import extension.buildLibrary
 import extension.defaultTargets
 import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import task.generateDefFiles
 
 plugins {
     id("build-config")
     id("publication")
 }
 
-version = "0.2.0-rc1"
+version = "0.2.0-rc2"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitCore")
@@ -21,12 +21,6 @@ kotlin {
                 xcf.add(this)
                 isStatic = true
             }
-
-            it.compilations["main"].cinterops {
-                create("FirebaseCore") {
-                    defFile(project.layout.projectDirectory.file("src/interop/FirebaseCore.def"))
-                }
-            }
         },
         jsConfig = {
             compilations["main"].packageJson {
@@ -34,6 +28,21 @@ kotlin {
             }
         }
     )
+
+    swiftPMDependencies {
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = from("12.12.0"),
+            products = listOf(product("FirebaseCore")),
+            importedClangModules = listOf("FirebaseCore"),
+        )
+    }
+
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
 
     sourceSets {
         androidMain.dependencies {
@@ -46,9 +55,6 @@ kotlin {
     }
 }
 
-generateDefFiles(
-    fileName = "FirebaseCore",
-    interopFileName = "FirebaseCore.h"
-)
+buildLibrary()
 
 publishLibrary(artifactId = "core")

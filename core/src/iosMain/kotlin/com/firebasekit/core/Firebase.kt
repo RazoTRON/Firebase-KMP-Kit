@@ -1,7 +1,7 @@
 package com.firebasekit.core
 
-import com.firebasekit.native.FIRApp
 import kotlinx.cinterop.ExperimentalForeignApi
+import swiftPMImport.com.firebasekit.core.FIRApp
 
 @OptIn(ExperimentalForeignApi::class)
 fun Firebase.initialize() {

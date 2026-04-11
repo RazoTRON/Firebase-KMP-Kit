@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-version = "0.2.0-rc1"
+version = "0.2.0-rc2"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -33,18 +33,11 @@ kotlin {
     swiftPMDependencies {
         swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
-            version = from("12.9.0"),
-            products = listOf(
-                product("FirebaseCore"),
-                product("FirebaseRemoteConfig")
-            ),
-            importedClangModules = listOf(
-                "FirebaseCore",
-                "FirebaseRemoteConfigInternal",
-            ),
+            version = from("12.12.0"),
+            products = listOf(product("FirebaseRemoteConfig")),
+            importedClangModules = listOf("FirebaseRemoteConfigInternal"),
         )
     }
-
 
     sourceSets.configureEach {
         languageSettings {
