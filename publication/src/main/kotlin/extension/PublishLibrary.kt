@@ -5,7 +5,7 @@ import org.gradle.api.Project
 
 fun Project.publishLibrary(
     artifactId: String,
-    groupId: String = "io.github.razotron.Firebase-KMP-Kit",
+    groupId: String = "io.github.razotron.firebase-kit",
     libVersion: String = version.toString()
 ) {
     mavenPublishing {
