@@ -8,7 +8,7 @@ plugins {
     id("publication")
 }
 
-version = "0.2.0-rc2"
+version = "0.2.0-rc3"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitCore")
@@ -55,6 +55,6 @@ kotlin {
     }
 }
 
-buildLibrary()
+buildLibrary(libraryName = "FirebaseKitCore")
 
 publishLibrary(artifactId = "core")

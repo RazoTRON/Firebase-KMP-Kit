@@ -100,3 +100,6 @@ app/keys/
 /keys/
 /AGENTS.md
 /.swiftpm-locks/
+/.gradle-local/
+/sample/iosApp/KotlinMultiplatformLinkedPackage/subpackages/
+/sample/iosApp/KotlinMultiplatformLinkedPackage/.swiftpm/

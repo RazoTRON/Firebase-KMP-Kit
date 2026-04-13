@@ -19,6 +19,7 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 | Module          | Android | iOS | JS | Wasm | Desktop | Description                                                   |
 |-----------------|:-------:|:---:|:--:|:----:|:-------:|---------------------------------------------------------------|
 | `core`          |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                    |
+| `messaging`     |    ✅    |  ✅  | ❌  |  ❌   |    ❌    | Firebase Cloud Messaging token + topic APIs         |
 | `remote-config` |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Remote Config |
 
 ### KMP Target Names
@@ -38,10 +39,18 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.razotron.Firebase-KMP-Kit:remote-config:0.1.3")
+            implementation("io.github.razotron.firebase-kit:remote-config:0.2.0-rc3")
+            implementation("io.github.razotron.firebase-kit:messaging:0.2.0-rc3")
         }
     }
 }
+```
+
+## Installation (only iOS targets)
+
+```bash
+// Change path to the 'xcodeproj' file and module with Firebase Kit dependency if needed and perform
+XCODEPROJ_PATH="$(pwd)/iosApp/iosApp.xcodeproj" ./gradlew -p "$(pwd)" ':shared:integrateLinkagePackage'
 ```
 
 ## Remote Config - Common API
@@ -72,9 +81,27 @@ val remoteConfigData = flow {
 }.catch { emit("Error: ${it.message}") }
 ```
 
+## Messaging - Common API
+
+Android and iOS share the same `FirebaseMessaging` interface, accessed via `Firebase.messaging`:
+
+```kotlin
+// Read the current default FCM registration token
+val token: String = Firebase.messaging.getToken()
+
+// Delete the current default FCM registration token
+Firebase.messaging.deleteToken()
+
+// Manage topic subscriptions
+Firebase.messaging.subscribeToTopic("news")
+Firebase.messaging.unsubscribeFromTopic("news")
+```
+
+All Messaging operations are `suspend` functions.
+
 ## Platform Setup
 
-Each platform requires a one-time `Firebase.initialize()` call before accessing `Firebase.remoteConfig`.
+Each platform requires a one-time `Firebase.initialize()` call before accessing `Firebase.remoteConfig` or `Firebase.messaging`.
 
 ### Android
 
@@ -113,7 +140,7 @@ import com.firebasekit.core.Firebase
 import com.firebasekit.core.initialize
 
 fun Configure() {
-    Firebase.initialize(interval = 60.minutes) // optional fetch throttle
+    Firebase.initialize()
 }
 ```
 
@@ -152,6 +179,29 @@ fun main() {
 ```
 **Note:**
 > The web target wraps the Firebase JS SDK (`firebase@10.13.2`).
+
+### Messaging Notes
+
+#### Android
+
+Messaging uses the native Firebase Android SDK. The same `google-services` setup and `Firebase.initialize(this)` call shown above are enough for token and topic operations.
+
+#### iOS
+
+Messaging uses the native Firebase iOS SDK. Your app target still owns notification permission requests, APNs capability setup, and `registerForRemoteNotifications()`.
+
+If you disable Firebase Messaging method swizzling, forward the APNs device token manually:
+
+```kotlin
+import com.firebasekit.messaging.setFirebaseMessagingApnsToken
+import platform.Foundation.NSData
+
+fun forwardApnsToken(token: NSData) {
+    setFirebaseMessagingApnsToken(token)
+}
+```
+
+The current `messaging` module does not abstract foreground/background message delivery delegates.
 
 ### Desktop (JVM)
 

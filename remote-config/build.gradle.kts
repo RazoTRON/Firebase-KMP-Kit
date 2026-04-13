@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-version = "0.2.0-rc2"
+version = "0.2.0-rc3"
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -85,6 +85,6 @@ kotlin {
     }
 }
 
-buildLibrary()
+buildLibrary(libraryName = "FirebaseKitRemoteConfig")
 
 publishLibrary(artifactId = "remote-config")

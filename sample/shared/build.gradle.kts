@@ -39,6 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(projects.messaging)
             api(projects.remoteConfig)
 
             api(libs.compose.runtime)
@@ -49,6 +50,9 @@ kotlin {
             api(libs.compose.material3)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
 
         commonTest.dependencies {
@@ -59,6 +63,11 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.ktor.client.android)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
 
         jvmMain.dependencies {
@@ -78,6 +87,7 @@ kotlin {
          buildConfigField("FIREBASE_STORAGE_BUCKET", properties.getProperty("FIREBASE_STORAGE_BUCKET"))
          buildConfigField("FIREBASE_AUTH_DOMAIN", properties.getProperty("FIREBASE_AUTH_DOMAIN"))
          buildConfigField("FIREBASE_MEASUREMENT_ID", properties.getProperty("FIREBASE_MEASUREMENT_ID"))
+         buildConfigField("FIREBASE_FCM_ACCESS_TOKEN", properties.getProperty("FIREBASE_FCM_ACCESS_TOKEN", ""))
     }
 }
 

@@ -36,6 +36,7 @@ includeBuild("build-logic")
 includeBuild("publication")
 
 include(":core")
+include(":messaging")
 include(":remote-config")
 
 if (!gradle.startParameter.taskNames.any { it.contains("publish") }) {
