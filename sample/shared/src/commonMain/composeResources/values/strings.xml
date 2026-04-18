@@ -2,6 +2,8 @@
     <string name="firebase_kit">Firebase Kit</string>
     <string name="open_github">Open GitHub</string>
     <string name="messaging_title">Messaging</string>
+    <string name="latest_foreground_message">Latest Foreground Message</string>
+    <string name="foreground_message_empty">No foreground message received yet.</string>
     <string name="remote_config_title">Remote Config</string>
     <string name="refresh_token">Refresh Token</string>
     <string name="send_test_push">Send Push To Myself</string>

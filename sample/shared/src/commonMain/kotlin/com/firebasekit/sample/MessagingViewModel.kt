@@ -38,6 +38,7 @@ data class MessagingUiState(
 class MessagingViewModel {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
     private val sender by lazy { PushNotificationSender() }
+    private val firebaseMessaging = Firebase.messaging
 
     private val _uiState = MutableStateFlow(
         MessagingUiState(
@@ -83,7 +84,7 @@ class MessagingViewModel {
                 )
             }
 
-            val result = runCatching { Firebase.messaging.getToken() }
+            val result =  runCatching { firebaseMessaging.getToken() }
 
             _uiState.update { current ->
                 result.fold(

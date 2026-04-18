@@ -87,6 +87,7 @@ kotlin {
          buildConfigField("FIREBASE_STORAGE_BUCKET", properties.getProperty("FIREBASE_STORAGE_BUCKET"))
          buildConfigField("FIREBASE_AUTH_DOMAIN", properties.getProperty("FIREBASE_AUTH_DOMAIN"))
          buildConfigField("FIREBASE_MEASUREMENT_ID", properties.getProperty("FIREBASE_MEASUREMENT_ID"))
+         buildConfigField("FIREBASE_WEB_VAPID_KEY", properties.getProperty("FIREBASE_WEB_VAPID_KEY", ""))
          buildConfigField("FIREBASE_FCM_ACCESS_TOKEN", properties.getProperty("FIREBASE_FCM_ACCESS_TOKEN", ""))
     }
 }
