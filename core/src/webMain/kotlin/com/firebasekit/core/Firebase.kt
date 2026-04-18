@@ -1,10 +1,11 @@
 package com.firebasekit.core
 
+import com.firebasekit.core.bridge.FirebaseApp
+import com.firebasekit.core.common.JSBuilder
 import com.firebasekit.core.bridge.initializeApp
-import com.firebasekit.core.utils.createConfiguration
 import kotlin.js.JsAny
 
-var app: JsAny? = null
+var app: FirebaseApp? = null
     private set
 
 fun Firebase.initialize(
@@ -17,14 +18,14 @@ fun Firebase.initialize(
     measurementId: String,
 ) {
     app = initializeApp(
-        configuration = createConfiguration(
-            apiKey = apiKey,
-            authDomain = authDomain,
-            projectId = projectId,
-            storageBucket = storageBucket,
-            messagingSenderId = messagingSenderId,
-            appId = appId,
-            measurementId = measurementId
-        )
+        options = JSBuilder.build {
+            this.apiKey = apiKey
+            this.authDomain = authDomain
+            this.projectId = projectId
+            this.storageBucket = storageBucket
+            this.messagingSenderId = messagingSenderId
+            this.appId = appId
+            this.measurementId = measurementId
+        }
     )
 }

@@ -1,4 +1,4 @@
-package com.firebasekit.core.utils
+package com.firebasekit.core.common.utils
 
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -6,28 +6,6 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.js.JsAny
 import kotlin.js.Promise
 import kotlin.js.js
-
-fun createConfiguration(
-    apiKey: String,
-    authDomain: String,
-    projectId: String,
-    storageBucket: String,
-    messagingSenderId: String,
-    appId: String,
-    measurementId: String,
-): JsAny = js(
-    """
-    ({
-        apiKey: apiKey,
-        authDomain: authDomain,
-        projectId: projectId,
-        storageBucket: storageBucket,
-        messagingSenderId: messagingSenderId,
-        appId: appId,
-        measurementId: measurementId
-    })
-"""
-)
 
 suspend fun <T : JsAny?> Promise<T>.awaitJs(): T =
     suspendCoroutine { cont ->

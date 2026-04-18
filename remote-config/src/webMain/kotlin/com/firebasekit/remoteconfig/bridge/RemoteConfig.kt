@@ -1,7 +1,7 @@
 package com.firebasekit.remoteconfig.bridge
 
 import com.firebasekit.core.app
-import com.firebasekit.core.utils.awaitJs
+import com.firebasekit.core.common.utils.awaitJs
 import kotlin.js.JsAny
 
 interface RemoteConfig {
