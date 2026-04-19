@@ -87,4 +87,8 @@ kotlin {
 
 buildLibrary(libraryName = "FirebaseKitRemoteConfig")
 
-publishLibrary(artifactId = "remote-config")
+publishLibrary(
+    name = "Firebase KMP Kit",
+    description = "A Kotlin Multiplatform library that provides Firebase Services in common code.",
+    artifactId = "remote-config"
+)

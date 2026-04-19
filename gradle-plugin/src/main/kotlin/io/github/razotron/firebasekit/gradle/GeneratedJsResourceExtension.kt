@@ -1,4 +1,4 @@
-package extension
+package io.github.razotron.firebasekit.gradle
 
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -9,4 +9,5 @@ abstract class GeneratedJsResourceExtension @Inject constructor(
 ) {
     val fileName: Property<String> = objects.property(String::class.java)
     val content: Property<String> = objects.property(String::class.java)
+    val sourceSetName: Property<String> = objects.property(String::class.java)
 }

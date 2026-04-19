@@ -3,6 +3,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        mavenLocal()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -19,6 +20,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -34,6 +36,7 @@ dependencyResolutionManagement {
 
 includeBuild("build-logic")
 includeBuild("publication")
+includeBuild("gradle-plugin")
 
 include(":core")
 include(":messaging")
