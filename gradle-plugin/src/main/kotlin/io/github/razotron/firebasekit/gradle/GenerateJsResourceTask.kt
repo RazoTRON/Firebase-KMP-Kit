@@ -1,6 +1,5 @@
 package io.github.razotron.firebasekit.gradle
 
-import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
@@ -10,7 +9,8 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.the
+
+private const val WEB_NPM_VERSION = "10.13.2"
 
 abstract class GenerateJsResourceTask : DefaultTask() {
     @get:Input
@@ -29,9 +29,6 @@ abstract class GenerateJsResourceTask : DefaultTask() {
     }
 }
 
-val Project.libs: LibrariesForLibs
-    get() = the<LibrariesForLibs>()
-
 fun Project.generateJsResources(
     apiKey: String,
     authDomain: String,
@@ -45,8 +42,8 @@ fun Project.generateJsResources(
         fileName.set("firebase-messaging-sw.js")
         content.set(
             """
-        importScripts('https://www.gstatic.com/firebasejs/${libs.versions.firebase.webNpm.get()}/firebase-app-compat.js');
-        importScripts('https://www.gstatic.com/firebasejs/${libs.versions.firebase.webNpm.get()}/firebase-messaging-compat.js');
+        importScripts('https://www.gstatic.com/firebasejs/$WEB_NPM_VERSION/firebase-app-compat.js');
+        importScripts('https://www.gstatic.com/firebasejs/$WEB_NPM_VERSION/firebase-messaging-compat.js');
 
         firebase.initializeApp({
           apiKey: "$apiKey",

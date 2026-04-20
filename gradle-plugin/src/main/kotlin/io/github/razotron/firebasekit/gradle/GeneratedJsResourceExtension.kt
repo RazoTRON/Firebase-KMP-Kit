@@ -9,5 +9,4 @@ abstract class GeneratedJsResourceExtension @Inject constructor(
 ) {
     val fileName: Property<String> = objects.property(String::class.java)
     val content: Property<String> = objects.property(String::class.java)
-    val sourceSetName: Property<String> = objects.property(String::class.java)
 }

@@ -4,35 +4,29 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 class GenerateJsResourcePlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
-        val extension = extensions.create<GeneratedJsResourceExtension>("generatedJsResource").apply {
-            fileName.convention("generated.js")
-            sourceSetName.convention("commonMain")
-        }
+        val extension = extensions.create<GeneratedJsResourceExtension>("generatedJsResource")
 
-        pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
-            val kotlin = extensions.getByType<KotlinMultiplatformExtension>()
-            val generatedResourcesDir = layout.buildDirectory.dir("generated/resources/js/${extension.sourceSetName.get()}")
+        project.pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+            val kotlin = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+            val outputDir = project.layout.buildDirectory.dir("generated/resources/webMain")
 
-            val generateJsResource = tasks.register<GenerateJsResourceTask>("generateJsResource") {
-                group = "generation"
-                description = "Generates a JavaScript resource file for a Kotlin Multiplatform source set."
+            val generateTask = tasks.register<GenerateJsResourceTask>("generateJsResource") {
+                outputDirectory.set(outputDir)
                 fileName.set(extension.fileName)
                 content.set(extension.content)
-                outputDirectory.set(generatedResourcesDir)
             }
 
-            kotlin.sourceSets.named(extension.sourceSetName.get()) {
-                resources.srcDir(generatedResourcesDir)
+            kotlin.sourceSets.named("commonMain") {
+                resources.srcDir(outputDir)
             }
 
-            tasks.matching { it.name.endsWith("ProcessResources") }.configureEach {
-                dependsOn(generateJsResource)
+            project.tasks.matching { it.name.endsWith("ProcessResources") }.configureEach {
+                dependsOn(generateTask)
             }
         }
     }

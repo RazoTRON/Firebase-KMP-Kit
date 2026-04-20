@@ -2,7 +2,6 @@ pluginManagement {
     includeBuild("../publication")
 
     repositories {
-        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kt/dev")
         google()
         mavenCentral()
@@ -12,7 +11,6 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         maven("https://packages.jetbrains.team/maven/p/kt/dev")
         google()
         mavenCentral()
