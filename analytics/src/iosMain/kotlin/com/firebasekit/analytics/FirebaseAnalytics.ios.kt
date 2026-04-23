@@ -2,9 +2,6 @@ package com.firebasekit.analytics
 
 import com.firebasekit.core.Firebase
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
 
 actual val Firebase.analytics: FirebaseAnalytics
     get() = FirebaseAnalyticsIos()
@@ -24,7 +21,7 @@ class FirebaseAnalyticsIos(
         analytics.setUserId(userId)
     }
 
-    override fun setUserProperty(name: String, value: String?) {
+    override fun setUserProperty(name: String, value: String) {
         analytics.setUserProperty(name, value)
     }
 
@@ -34,10 +31,10 @@ class FirebaseAnalyticsIos(
 }
 
 private fun Bundle.toNativeParameters(): Map<Any?, *>? {
-    if (isEmpty()) return null
+    if (values.isEmpty()) return null
 
     return buildMap {
-        forEach { key, value -> put(key, value.toNativeValue()) }
+        this@toNativeParameters.values.forEach { put(it.key, it.value.toNativeValue()) }
     }
 }
 

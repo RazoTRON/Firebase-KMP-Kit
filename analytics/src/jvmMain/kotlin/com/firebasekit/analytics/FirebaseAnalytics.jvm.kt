@@ -13,7 +13,7 @@ private object UnsupportedFirebaseAnalytics : FirebaseAnalytics {
 
     override fun setUserId(userId: String?) = unsupportedAnalytics()
 
-    override fun setUserProperty(name: String, value: String?) = unsupportedAnalytics()
+    override fun setUserProperty(name: String, value: String) = unsupportedAnalytics()
 
     override fun resetAnalyticsData() = unsupportedAnalytics()
 }

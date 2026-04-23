@@ -21,7 +21,12 @@ kotlin {
                 xcf.add(this)
                 isStatic = true
             }
-        }
+        },
+        jsConfig = {
+            compilations["main"].packageJson {
+                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.get()))
+            }
+        },
     )
 
     swiftPMDependencies {
@@ -47,6 +52,10 @@ kotlin {
 
         androidMain.dependencies {
             api(libs.firebase.analytics)
+        }
+
+        webMain.dependencies {
+            api(devNpm("firebase", libs.versions.firebase.webNpm.get()))
         }
 
         commonTest.dependencies {

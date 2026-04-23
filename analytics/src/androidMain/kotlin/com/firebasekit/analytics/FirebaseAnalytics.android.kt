@@ -5,8 +5,6 @@ import com.firebasekit.core.Firebase
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics as AndroidFirebaseAnalytics
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
 
 actual val Firebase.analytics: FirebaseAnalytics
     get() = FirebaseAnalyticsAndroid()
@@ -28,7 +26,7 @@ class FirebaseAnalyticsAndroid(
         analytics.setUserId(userId)
     }
 
-    override fun setUserProperty(name: String, value: String?) {
+    override fun setUserProperty(name: String, value: String) {
         analytics.setUserProperty(name, value)
     }
 
@@ -38,10 +36,10 @@ class FirebaseAnalyticsAndroid(
 }
 
 private fun Bundle.toAndroidBundle(): AndroidBundle? {
-    if (isEmpty()) return null
+    if (values.isEmpty()) return null
 
     return AndroidBundle().apply {
-        this@toAndroidBundle.forEach(::putAnalyticsParameter)
+        values.forEach { putAnalyticsParameter(it.key, it.value) }
     }
 }
 
