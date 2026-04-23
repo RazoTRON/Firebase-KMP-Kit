@@ -26,13 +26,6 @@ class AppActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         Firebase.initialize(this)
-        Firebase.analytics.setAnalyticsCollectionEnabled(true)
-        Firebase.analytics.logEvent(
-            name = "sample_app_open",
-            parameters = AnalyticsBundle().apply {
-                put("platform", "android")
-            }
-        )
         createNotificationChannel()
         ensureNotificationPermission()
 

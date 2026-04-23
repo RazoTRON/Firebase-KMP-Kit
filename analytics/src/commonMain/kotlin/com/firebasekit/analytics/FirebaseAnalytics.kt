@@ -3,8 +3,6 @@ package com.firebasekit.analytics
 import com.firebasekit.core.Firebase
 import kotlin.jvm.JvmInline
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToJsonElement
@@ -83,6 +81,6 @@ internal sealed interface BundleValue {
 }
 
 internal const val UNSUPPORTED_MESSAGE =
-    "Firebase Analytics is only supported on Android in this module"
+    "Firebase Analytics is only supported on Android and iOS in this module"
 
 internal fun unsupportedAnalytics(): Nothing = throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)

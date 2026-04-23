@@ -24,6 +24,21 @@ kotlin {
         }
     )
 
+    swiftPMDependencies {
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = from("12.12.0"),
+            products = listOf(product("FirebaseAnalytics")),
+            importedClangModules = listOf("FirebaseAnalytics"),
+        )
+    }
+
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             api(projects.core)

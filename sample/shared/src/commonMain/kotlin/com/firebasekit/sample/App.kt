@@ -50,6 +50,7 @@ import org.jetbrains.compose.resources.vectorResource
 fun App() = AppTheme {
     val remoteConfigViewModel = retain { AppViewModel() }
     val messagingViewModel = retain { MessagingViewModel() }
+    val analyticsViewModel = retain { AnalyticsViewModel() }
     val remoteConfigData by remoteConfigViewModel.remoteConfigData.collectAsState()
     val messagingState by messagingViewModel.uiState.collectAsState()
     val isPreview = LocalInspectionMode.current
