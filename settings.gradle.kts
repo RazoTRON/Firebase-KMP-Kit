@@ -36,6 +36,7 @@ includeBuild("build-logic")
 includeBuild("publication")
 includeBuild("gradle-plugin")
 
+include(":analytics")
 include(":core")
 include(":messaging")
 include(":remote-config")

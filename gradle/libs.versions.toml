@@ -18,6 +18,7 @@ vanniktech-gradle = "0.36.0"
 conventionKotlin = "2.3.20" # Convention plugins sometimes need older Kotlin for compatibility with kotlin-dsl plugin
 
 firebase-remoteConfigs = "23.0.1"
+firebase-analytics = "23.2.0"
 firebase-messaging = "24.0.1"
 firebase-webNpm = "10.13.2"
 
@@ -40,6 +41,7 @@ kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializa
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 firebase-remoteConfigs = { module = "com.google.firebase:firebase-config", version.ref = "firebase-remoteConfigs" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
