@@ -48,7 +48,7 @@ import org.jetbrains.compose.resources.vectorResource
 @Preview
 @Composable
 fun App() = AppTheme {
-    val remoteConfigViewModel = retain { AppViewModel() }
+    val remoteConfigViewModel = retain { RemoteConfigViewModel() }
     val messagingViewModel = retain { MessagingViewModel() }
     val analyticsViewModel = retain { AnalyticsViewModel() }
     val remoteConfigData by remoteConfigViewModel.remoteConfigData.collectAsState()

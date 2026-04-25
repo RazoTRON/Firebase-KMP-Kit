@@ -1,4 +1,4 @@
-package com.firebasekit.remoteconfig.models
+package com.firebasekit.core.models
 
 import kotlinx.serialization.Serializable
 

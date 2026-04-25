@@ -4,6 +4,7 @@ import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
+    alias(libs.plugins.kotlinx.serialization)
     id("build-config")
     id("publication")
 }
@@ -45,6 +46,17 @@ kotlin {
     }
 
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.serialization.json)
+        }
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.java)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+        }
         androidMain.dependencies {
             implementation(libs.firebase.remoteConfigs)
         }

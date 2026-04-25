@@ -1,7 +1,7 @@
 package com.firebasekit.remoteconfig
 
 import com.firebasekit.core.FirebaseJvm
-import com.firebasekit.remoteconfig.models.InstallationResponse
+import com.firebasekit.core.models.InstallationResponse
 import com.firebasekit.remoteconfig.models.RemoteConfigResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine

@@ -1,15 +1,16 @@
 package com.firebasekit.core
 
-import java.io.File
-import java.security.SecureRandom
-import java.util.Base64
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-fun Firebase.initialize(
+suspend fun Firebase.initialize(
     apiKey: String,
     projectId: String,
     appId: String,
+    analyticsApiSecret: String? = null,
+    measurementId: String? = null,
     interval: Duration = 60.minutes,
     cacheFilePath: String = "cache/firebase_data"
 ) {
@@ -17,62 +18,64 @@ fun Firebase.initialize(
         apiKey = apiKey,
         projectId = projectId,
         appId = appId,
+        analyticsApiSecret = analyticsApiSecret,
+        measurementId = measurementId,
         intervalSeconds = interval,
         cacheFilePath = cacheFilePath
     )
 }
 
 object FirebaseJvm {
+    private val dispatcher = Dispatchers.IO
+
     var apiKey: String? = null
         private set
     var projectId: String? = null
         private set
     var appId: String? = null
         private set
+    var analyticsApiSecret: String? = null
+        private set
+    var measurementId: String? = null
+        private set
     var interval: Duration? = null
         private set
-    var fid: String? = null
+    var clientId: String? = null
         private set
+    var fid: String? = null
 
-    internal fun initialize(
+    private val firebaseCache = FirebaseCache()
+
+    internal suspend fun initialize(
         apiKey: String,
         projectId: String,
         appId: String,
+        analyticsApiSecret: String?,
+        measurementId: String?,
         intervalSeconds: Duration,
         cacheFilePath: String
     ) {
         this.apiKey = apiKey
         this.projectId = projectId
         this.appId = appId
+        this.analyticsApiSecret = analyticsApiSecret
+        this.measurementId = measurementId
         this.interval = intervalSeconds
-        this.fid = FirebaseCache(cacheFile = File(cacheFilePath)).getFID()
-    }
-}
 
+        firebaseCache.init(cacheFilePath)
 
-internal class FirebaseCache(cacheFile: File) {
-    private val file = cacheFile
-
-    fun getFID(): String {
-        if (file.exists()) {
-            return file.readText()
+        withContext(dispatcher) {
+            fid = firebaseCache.getFID()
+            clientId = firebaseCache.getClientId()
         }
-
-        val fid = generateFid()
-        file.parentFile.mkdirs()
-        file.writeText(fid)
-        return fid
     }
 
-    private fun generateFid(): String {
-        val random = ByteArray(17)
-        SecureRandom().nextBytes(random)
-        random[0] = (random[0].toInt() and 0x0F or 0x70).toByte()
+    suspend fun refreshCachedData() {
+        firebaseCache.refreshCachedData()
 
-        val encoded = Base64.getUrlEncoder()
-            .withoutPadding()
-            .encodeToString(random)
-
-        return encoded.take(22)
+        withContext(dispatcher) {
+            fid = firebaseCache.getFID()
+            clientId = firebaseCache.getClientId()
+        }
     }
 }

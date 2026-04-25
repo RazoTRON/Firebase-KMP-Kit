@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 
-class AppViewModel {
+class RemoteConfigViewModel {
     // Simplified for demonstration purposes, use the appropriate dispatcher.
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
