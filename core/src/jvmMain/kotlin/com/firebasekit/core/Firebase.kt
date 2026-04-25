@@ -9,7 +9,7 @@ suspend fun Firebase.initialize(
     apiKey: String,
     projectId: String,
     appId: String,
-    analyticsApiSecret: String? = null,
+    measurementProtocolApiSecret: String? = null,
     measurementId: String? = null,
     interval: Duration = 60.minutes,
     cacheFilePath: String = "cache/firebase_data"
@@ -18,7 +18,7 @@ suspend fun Firebase.initialize(
         apiKey = apiKey,
         projectId = projectId,
         appId = appId,
-        analyticsApiSecret = analyticsApiSecret,
+        analyticsApiSecret = measurementProtocolApiSecret,
         measurementId = measurementId,
         intervalSeconds = interval,
         cacheFilePath = cacheFilePath

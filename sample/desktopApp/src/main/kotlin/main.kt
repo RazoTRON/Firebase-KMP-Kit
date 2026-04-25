@@ -7,13 +7,18 @@ import java.awt.Dimension
 import com.firebasekit.core.Firebase
 import com.firebasekit.core.initialize
 import com.firebasekit.sample.App
+import kotlinx.coroutines.runBlocking
 
 fun main() {
-    Firebase.initialize(
-        apiKey = BuildConfig.FIREBASE_API_KEY,
-        projectId = BuildConfig.FIREBASE_PROJECT_ID,
-        appId = BuildConfig.FIREBASE_APP_ID,
-    )
+    runBlocking {
+        Firebase.initialize(
+            apiKey = BuildConfig.FIREBASE_API_KEY,
+            projectId = BuildConfig.FIREBASE_PROJECT_ID,
+            measurementId = BuildConfig.FIREBASE_MEASUREMENT_ID, // Analytics
+            measurementProtocolApiSecret = BuildConfig.MEASUREMENT_PROTOCOL_API_SECRET,  // Analytics
+            appId = BuildConfig.FIREBASE_APP_ID,
+        )
+    }
 
     application {
         Window(
