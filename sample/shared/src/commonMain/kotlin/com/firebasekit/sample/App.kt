@@ -37,6 +37,10 @@ import com.firebasekit.sample.resources.firebase_kit
 import com.firebasekit.sample.resources.messaging_title
 import com.firebasekit.sample.resources.github
 import com.firebasekit.sample.resources.open_github
+import com.firebasekit.sample.resources.performance_title
+import com.firebasekit.sample.resources.record
+import com.firebasekit.sample.resources.record_http_metric
+import com.firebasekit.sample.resources.record_trace
 import com.firebasekit.sample.resources.refresh_token
 import com.firebasekit.sample.resources.remote_config_title
 import com.firebasekit.sample.resources.send_test_push
@@ -51,8 +55,10 @@ fun App() = AppTheme {
     val remoteConfigViewModel = retain { RemoteConfigViewModel() }
     val messagingViewModel = retain { MessagingViewModel() }
     val analyticsViewModel = retain { AnalyticsViewModel() }
+    val performanceViewModel = retain { PerformanceViewModel() }
     val remoteConfigData by remoteConfigViewModel.remoteConfigData.collectAsState()
     val messagingState by messagingViewModel.uiState.collectAsState()
+    val performanceState by performanceViewModel.uiState.collectAsState()
     val isPreview = LocalInspectionMode.current
 
     Column(
@@ -124,6 +130,43 @@ fun App() = AppTheme {
             fontFamily = FontFamily(Font(Res.font.Jura_Bold)),
             style = MaterialTheme.typography.bodyLarge
         )
+
+        SectionTitle(stringResource(Res.string.performance_title))
+
+        Text(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+            text = performanceState.statusMessage,
+            fontFamily = FontFamily(Font(Res.font.Jura_Bold)),
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Text(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
+            text = stringResource(Res.string.record),
+            fontFamily = FontFamily(Font(Res.font.Jura_Bold)),
+            style = MaterialTheme.typography.bodyLarge
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ElevatedButton(
+                modifier = Modifier.weight(1f),
+                onClick = performanceViewModel::recordTrace,
+                enabled = performanceState.isRunning.not(),
+                colors = ButtonDefaults.elevatedButtonColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+                content = { Text(stringResource(Res.string.record_trace)) }
+            )
+
+            ElevatedButton(
+                modifier = Modifier.weight(1f),
+                onClick = performanceViewModel::recordHttpMetric,
+                enabled = performanceState.isRunning.not(),
+                colors = ButtonDefaults.elevatedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                content = { Text(stringResource(Res.string.record_http_metric)) }
+            )
+        }
 
         ElevatedButton(
             modifier = Modifier

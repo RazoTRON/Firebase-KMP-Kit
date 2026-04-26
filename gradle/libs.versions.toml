@@ -20,6 +20,7 @@ conventionKotlin = "2.3.20" # Convention plugins sometimes need older Kotlin for
 firebase-remoteConfigs = "23.0.1"
 firebase-analytics = "23.2.0"
 firebase-messaging = "24.0.1"
+firebase-performance = "22.0.4"
 firebase-webNpm = "10.13.2"
 
 [libraries]
@@ -43,6 +44,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 firebase-remoteConfigs = { module = "com.google.firebase:firebase-config", version.ref = "firebase-remoteConfigs" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
+firebase-performance = { module = "com.google.firebase:firebase-perf", version.ref = "firebase-performance" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }

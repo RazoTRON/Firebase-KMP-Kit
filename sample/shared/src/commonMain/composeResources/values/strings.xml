@@ -5,6 +5,10 @@
     <string name="latest_foreground_message">Latest Foreground Message</string>
     <string name="foreground_message_empty">No foreground message received yet.</string>
     <string name="remote_config_title">Remote Config</string>
+    <string name="performance_title">Performance</string>
+    <string name="record">Record:</string>
+    <string name="record_trace">Trace</string>
+    <string name="record_http_metric">HTTP Metric</string>
     <string name="refresh_token">Refresh Token</string>
-    <string name="send_test_push">Send Push To Myself</string>
+    <string name="send_test_push">Send Push</string>
 </resources>

@@ -39,6 +39,7 @@ includeBuild("gradle-plugin")
 include(":analytics")
 include(":core")
 include(":messaging")
+include(":performance")
 include(":remote-config")
 
 if (!gradle.startParameter.taskNames.any { it.contains("publish") }) {

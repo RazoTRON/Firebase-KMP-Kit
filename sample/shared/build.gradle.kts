@@ -39,6 +39,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(projects.performance)
             api(projects.analytics)
             api(projects.messaging)
             api(projects.remoteConfig)

@@ -13,6 +13,7 @@ let package = Package(
     )
   ],
   dependencies: [
+    .package(path: "subpackages/_performance"),
     .package(path: "subpackages/_analytics"),
     .package(path: "subpackages/_messaging"),
     .package(path: "subpackages/_remote_config"),
@@ -22,6 +23,7 @@ let package = Package(
     .target(
       name: "KotlinMultiplatformLinkedPackage",
       dependencies: [
+        .product(name: "_performance", package: "_performance"),
         .product(name: "_analytics", package: "_analytics"),
         .product(name: "_messaging", package: "_messaging"),
         .product(name: "_remote_config", package: "_remote_config"),
