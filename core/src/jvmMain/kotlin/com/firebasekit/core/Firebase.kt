@@ -9,6 +9,10 @@ suspend fun Firebase.initialize(
     apiKey: String,
     projectId: String,
     appId: String,
+    authDomain: String? = null,
+    storageBucket: String? = null,
+    messagingSenderId: String? = null,
+    webVapidKey: String? = null,
     measurementProtocolApiSecret: String? = null,
     measurementId: String? = null,
     interval: Duration = 60.minutes,
@@ -18,6 +22,10 @@ suspend fun Firebase.initialize(
         apiKey = apiKey,
         projectId = projectId,
         appId = appId,
+        authDomain = authDomain,
+        storageBucket = storageBucket,
+        messagingSenderId = messagingSenderId,
+        webVapidKey = webVapidKey,
         analyticsApiSecret = measurementProtocolApiSecret,
         measurementId = measurementId,
         intervalSeconds = interval,
@@ -33,6 +41,14 @@ object FirebaseJvm {
     var projectId: String? = null
         private set
     var appId: String? = null
+        private set
+    var authDomain: String? = null
+        private set
+    var storageBucket: String? = null
+        private set
+    var messagingSenderId: String? = null
+        private set
+    var webVapidKey: String? = null
         private set
     var analyticsApiSecret: String? = null
         private set
@@ -50,6 +66,10 @@ object FirebaseJvm {
         apiKey: String,
         projectId: String,
         appId: String,
+        authDomain: String?,
+        storageBucket: String?,
+        messagingSenderId: String?,
+        webVapidKey: String?,
         analyticsApiSecret: String?,
         measurementId: String?,
         intervalSeconds: Duration,
@@ -58,6 +78,10 @@ object FirebaseJvm {
         this.apiKey = apiKey
         this.projectId = projectId
         this.appId = appId
+        this.authDomain = authDomain
+        this.storageBucket = storageBucket
+        this.messagingSenderId = messagingSenderId
+        this.webVapidKey = webVapidKey
         this.analyticsApiSecret = analyticsApiSecret
         this.measurementId = measurementId
         this.interval = intervalSeconds

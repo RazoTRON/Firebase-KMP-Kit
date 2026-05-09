@@ -60,6 +60,10 @@ kotlin {
             api(devNpm("firebase", libs.versions.firebase.webNpm.get()))
         }
 
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.serialization.json)
+        }
+
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kotlinx.coroutines.test)

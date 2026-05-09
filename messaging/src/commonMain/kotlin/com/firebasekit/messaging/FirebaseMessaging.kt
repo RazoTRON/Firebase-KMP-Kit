@@ -10,4 +10,4 @@ expect interface FirebaseMessaging {
 }
 
 internal const val UNSUPPORTED_MESSAGE =
-    "Firebase Messaging is only supported on Android, iOS, JS, and Wasm in this module"
+    "Firebase Messaging topic subscriptions are only supported on Android and iOS in this module"
