@@ -9,6 +9,8 @@ import com.firebasekit.core.initialize
 import com.firebasekit.messaging.messaging
 import com.firebasekit.sample.App
 import kotlinx.coroutines.runBlocking
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
 
 fun main() {
     runBlocking {
@@ -23,6 +25,8 @@ fun main() {
             measurementProtocolApiSecret = BuildConfig.MEASUREMENT_PROTOCOL_API_SECRET,  // Analytics
             appId = BuildConfig.FIREBASE_APP_ID,
         )
+
+        Firebase.messaging.refreshTokenDuration = 1.days
 
         Firebase.messaging.onMessage {
             println(it)

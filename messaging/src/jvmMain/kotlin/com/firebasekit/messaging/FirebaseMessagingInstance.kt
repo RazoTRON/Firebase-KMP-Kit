@@ -2,6 +2,11 @@ package com.firebasekit.messaging
 
 import com.firebasekit.core.Firebase
 import com.firebasekit.core.FirebaseJvm
+import com.firebasekit.messaging.FirebaseMessaging.Companion.DEFAULT_CACHE_FILE_PATH
+import com.firebasekit.messaging.FirebaseMessaging.Companion.DEFAULT_REFRESH_DURATION
+import java.io.File
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 
 actual val Firebase.messaging: FirebaseMessaging by lazy { FirebaseMessagingJvm() }
@@ -9,13 +14,25 @@ actual val Firebase.messaging: FirebaseMessaging by lazy { FirebaseMessagingJvm(
 internal class FirebaseMessagingJvm(
     private val bridge: FcmBrowserBridge = LocalFcmBrowserBridge(),
 ) : FirebaseMessaging {
-    override suspend fun getToken(): String = bridge.getToken(firebaseConfig())
+    override var refreshTokenDuration: Duration = DEFAULT_REFRESH_DURATION
+    override var cacheTokenPath: String = DEFAULT_CACHE_FILE_PATH
 
-    override suspend fun deleteToken() = bridge.deleteToken(firebaseConfig())
+    private val tokenCache: FirebaseMessagingTokenCache = FirebaseMessagingTokenCache(
+        cacheFile = { File(cacheTokenPath) },
+        refreshDuration = { refreshTokenDuration }
+    )
 
-    override suspend fun subscribeToTopic(topic: String) = unsupported()
+    override suspend fun getToken(): String {
+        tokenCache.getValidToken()?.let { return it }
 
-    override suspend fun unsubscribeFromTopic(topic: String) = unsupported()
+        return bridge.getToken(firebaseConfig())
+            .also { token -> tokenCache.save(token) }
+    }
+
+    override suspend fun deleteToken() {
+        bridge.deleteToken(firebaseConfig())
+        tokenCache.clear()
+    }
 
     override fun onMessage(block: (payload: String) -> Unit) = bridge.onMessage(block)
 
@@ -39,6 +56,4 @@ internal class FirebaseMessagingJvm(
             webVapidKey = webVapidKey,
         )
     }
-
-    private fun unsupported(): Nothing = throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
 }

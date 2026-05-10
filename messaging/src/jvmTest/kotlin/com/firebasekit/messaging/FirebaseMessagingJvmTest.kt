@@ -2,6 +2,8 @@ package com.firebasekit.messaging
 
 import com.firebasekit.core.FirebaseJvm
 import kotlinx.coroutines.test.runTest
+import java.io.File
+import kotlin.time.Duration.Companion.days
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -13,8 +15,12 @@ import kotlin.test.assertTrue
 class FirebaseMessagingJvmTest {
 
     private val bridge = FakeFcmBrowserBridge()
+    private val tokenCacheFiles = mutableListOf<File>()
+    private var nowEpochSeconds = 1_700_000_000L
 
-    private fun sut() = FirebaseMessagingJvm(bridge)
+    private fun sut(
+        tokenCache: FirebaseMessagingTokenCache = tokenCache(),
+    ) = FirebaseMessagingJvm(bridge, tokenCache)
 
     @BeforeTest
     fun setup() {
@@ -26,6 +32,7 @@ class FirebaseMessagingJvmTest {
         setFirebaseJvmField("messagingSenderId", "1234567890")
         setFirebaseJvmField("webVapidKey", "test-vapid-key")
         setFirebaseJvmField("measurementId", "G-TEST")
+        nowEpochSeconds = 1_700_000_000L
     }
 
     @AfterTest
@@ -38,6 +45,8 @@ class FirebaseMessagingJvmTest {
         setFirebaseJvmField("messagingSenderId", null)
         setFirebaseJvmField("webVapidKey", null)
         setFirebaseJvmField("measurementId", null)
+        tokenCacheFiles.forEach { it.delete() }
+        tokenCacheFiles.clear()
     }
 
     @Test
@@ -45,6 +54,7 @@ class FirebaseMessagingJvmTest {
         val token = sut().getToken()
 
         assertEquals("test-token", token)
+        assertEquals(1, bridge.tokenRequests)
         assertEquals(
             DesktopMessagingConfig(
                 apiKey = "test-api-key",
@@ -61,11 +71,62 @@ class FirebaseMessagingJvmTest {
     }
 
     @Test
+    fun getToken_returnsCachedTokenWithinDefaultRefreshDuration() = runTest {
+        val messaging = sut()
+
+        assertEquals("test-token", messaging.getToken())
+
+        bridge.tokenToReturn = "new-token"
+        nowEpochSeconds += 29.days.inWholeSeconds
+
+        assertEquals("test-token", messaging.getToken())
+        assertEquals(1, bridge.tokenRequests)
+    }
+
+    @Test
+    fun getToken_refreshesCachedTokenAfterDefaultRefreshDuration() = runTest {
+        val messaging = sut()
+
+        assertEquals("test-token", messaging.getToken())
+
+        bridge.tokenToReturn = "refreshed-token"
+        nowEpochSeconds += 30.days.inWholeSeconds
+
+        assertEquals("refreshed-token", messaging.getToken())
+        assertEquals(2, bridge.tokenRequests)
+    }
+
+    @Test
+    fun getToken_savesTokenDateAndRefreshDuration() = runTest {
+        val cacheFile = tokenCacheFile()
+
+        sut(tokenCache(cacheFile)).getToken()
+
+        val cached = cacheFile.readText()
+        assertTrue(cached.contains("\"token\":\"test-token\""))
+        assertTrue(cached.contains("\"savedAtEpochSeconds\":1700000000"))
+        assertTrue(cached.contains("\"refreshDurationSeconds\":2592000"))
+    }
+
+    @Test
     fun deleteToken_delegatesToBrowserBridge_withFirebaseConfig() = runTest {
         sut().deleteToken()
 
         assertEquals("test-api-key", bridge.lastDeleteConfig?.apiKey)
         assertTrue(bridge.deleteCalled)
+    }
+
+    @Test
+    fun deleteToken_clearsCachedTokenAfterBridgeDeleteSucceeds() = runTest {
+        val cacheFile = tokenCacheFile()
+        val messaging = sut(tokenCache(cacheFile))
+
+        messaging.getToken()
+        assertTrue(cacheFile.exists())
+
+        messaging.deleteToken()
+
+        assertTrue(cacheFile.exists().not())
     }
 
     @Test
@@ -113,10 +174,13 @@ class FirebaseMessagingJvmTest {
         var lastTokenConfig: DesktopMessagingConfig? = null
         var lastDeleteConfig: DesktopMessagingConfig? = null
         var deleteCalled = false
+        var tokenRequests = 0
+        var tokenToReturn = "test-token"
 
         override suspend fun getToken(config: DesktopMessagingConfig): String {
             lastTokenConfig = config
-            return "test-token"
+            tokenRequests += 1
+            return tokenToReturn
         }
 
         override suspend fun deleteToken(config: DesktopMessagingConfig) {
@@ -125,6 +189,20 @@ class FirebaseMessagingJvmTest {
         }
 
         override fun onMessage(block: (payload: String) -> Unit) = Unit
+    }
+
+    private fun tokenCache(
+        file: File = tokenCacheFile(),
+    ) = FirebaseMessagingTokenCache(
+        cacheFile = file,
+        nowEpochSeconds = { nowEpochSeconds },
+    )
+
+    private fun tokenCacheFile(): File {
+        val file = File.createTempFile("firebase-messaging-token", ".json")
+        file.delete()
+        tokenCacheFiles += file
+        return file
     }
 
     private fun setFirebaseJvmField(name: String, value: Any?) {

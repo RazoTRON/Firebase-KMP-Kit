@@ -126,6 +126,7 @@ internal class FcmBrowserBridgeServer(
         exchange.respond(status = 200, body = "OK")
     }
 
+    // TODO Move to system file
     private fun registrationPage(): String {
         val config = configProvider()
         val firebaseConfig = config.toFirebaseConfigJson()
@@ -244,6 +245,7 @@ internal class FcmBrowserBridgeServer(
         """.trimIndent()
     }
 
+    // TODO Move to system file
     private fun serviceWorkerScript(): String {
         val firebaseConfig = configProvider().toFirebaseConfigJson()
         val encodedSession = Json.encodeToString(JsonPrimitive.serializer(), JsonPrimitive(session))
