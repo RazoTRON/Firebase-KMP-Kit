@@ -1,5 +1,6 @@
 package com.firebasekit.analytics
 
+import android.annotation.SuppressLint
 import android.os.Bundle as AndroidBundle
 import com.firebasekit.core.Firebase
 import com.google.firebase.FirebaseApp
@@ -9,6 +10,7 @@ import kotlinx.serialization.json.Json
 actual val Firebase.analytics: FirebaseAnalytics
     get() = FirebaseAnalyticsAndroid()
 
+@SuppressLint("MissingPermission")
 class FirebaseAnalyticsAndroid(
     private val analytics: AndroidFirebaseAnalytics = AndroidFirebaseAnalytics.getInstance(
         FirebaseApp.getInstance().applicationContext

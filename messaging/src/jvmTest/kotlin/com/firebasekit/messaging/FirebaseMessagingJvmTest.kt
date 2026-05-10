@@ -18,9 +18,7 @@ class FirebaseMessagingJvmTest {
     private val tokenCacheFiles = mutableListOf<File>()
     private var nowEpochSeconds = 1_700_000_000L
 
-    private fun sut(
-        tokenCache: FirebaseMessagingTokenCache = tokenCache(),
-    ) = FirebaseMessagingJvm(bridge, tokenCache)
+    private fun sut() = FirebaseMessagingJvm(bridge)
 
     @BeforeTest
     fun setup() {
@@ -100,7 +98,7 @@ class FirebaseMessagingJvmTest {
     fun getToken_savesTokenDateAndRefreshDuration() = runTest {
         val cacheFile = tokenCacheFile()
 
-        sut(tokenCache(cacheFile)).getToken()
+        sut().getToken()
 
         val cached = cacheFile.readText()
         assertTrue(cached.contains("\"token\":\"test-token\""))
@@ -119,7 +117,7 @@ class FirebaseMessagingJvmTest {
     @Test
     fun deleteToken_clearsCachedTokenAfterBridgeDeleteSucceeds() = runTest {
         val cacheFile = tokenCacheFile()
-        val messaging = sut(tokenCache(cacheFile))
+        val messaging = sut()
 
         messaging.getToken()
         assertTrue(cacheFile.exists())
@@ -144,32 +142,6 @@ class FirebaseMessagingJvmTest {
         assertEquals("Firebase Messaging sender ID is not set", error.message)
     }
 
-    @Test
-    fun subscribeToTopic_throwsUnsupportedOperation() = runTest {
-        val error = try {
-            sut().subscribeToTopic("news")
-            null
-        } catch (error: Throwable) {
-            error
-        }
-        assertNotNull(error)
-        assertIs<UnsupportedOperationException>(error)
-        assertEquals(UNSUPPORTED_MESSAGE, error.message)
-    }
-
-    @Test
-    fun unsubscribeFromTopic_throwsUnsupportedOperation() = runTest {
-        val error = try {
-            sut().unsubscribeFromTopic("news")
-            null
-        } catch (error: Throwable) {
-            error
-        }
-        assertNotNull(error)
-        assertIs<UnsupportedOperationException>(error)
-        assertEquals(UNSUPPORTED_MESSAGE, error.message)
-    }
-
     private class FakeFcmBrowserBridge : FcmBrowserBridge {
         var lastTokenConfig: DesktopMessagingConfig? = null
         var lastDeleteConfig: DesktopMessagingConfig? = null
@@ -190,13 +162,6 @@ class FirebaseMessagingJvmTest {
 
         override fun onMessage(block: (payload: String) -> Unit) = Unit
     }
-
-    private fun tokenCache(
-        file: File = tokenCacheFile(),
-    ) = FirebaseMessagingTokenCache(
-        cacheFile = file,
-        nowEpochSeconds = { nowEpochSeconds },
-    )
 
     private fun tokenCacheFile(): File {
         val file = File.createTempFile("firebase-messaging-token", ".json")
