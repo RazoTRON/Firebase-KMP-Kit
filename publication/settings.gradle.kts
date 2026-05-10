@@ -16,7 +16,6 @@
 
 pluginManagement {
     repositories {
-        maven("https://packages.jetbrains.team/maven/p/kt/dev")
         google()
         mavenCentral()
         gradlePluginPortal()
@@ -25,7 +24,6 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
-        maven("https://packages.jetbrains.team/maven/p/kt/dev")
         google()
         mavenCentral()
         gradlePluginPortal()

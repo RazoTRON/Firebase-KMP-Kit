@@ -3,7 +3,6 @@ plugins {
 }
 
 repositories {
-    maven("https://packages.jetbrains.team/maven/p/kt/dev")
     gradlePluginPortal() // To use 'maven-publish' and 'signing' plugins in our own plugin
 }
 
