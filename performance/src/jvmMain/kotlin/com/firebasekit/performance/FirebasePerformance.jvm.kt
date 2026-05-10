@@ -18,20 +18,21 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
 
 private const val PERFORMANCE_ENDPOINT =
     "https://firebaselogging-pa.googleapis.com/v1/firelog/legacy/log?key=AIzaSyCx80ru6-RXeTi3GvqkFsMVyMf-vpgIoVw"
 private const val PERFORMANCE_LOG_SOURCE = 462
 private const val PERFORMANCE_CLIENT_TYPE_JS = 1
 private const val PERFORMANCE_SDK_VERSION = "0.6.9"
-private const val INITIAL_SEND_DELAY_MS = 5_500L
 
 actual val Firebase.performance: FirebasePerformance by lazy {
     FirebasePerformanceJvm(defaultHttpClient())
@@ -58,16 +59,16 @@ class FirebasePerformanceJvm(
     private val client: HttpClient = defaultHttpClient(),
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
 ) : FirebasePerformance {
-    private var collectionEnabled = true
+    private val collectionEnabled = AtomicBoolean(true)
 
     override fun setPerformanceCollectionEnabled(enabled: Boolean) {
-        collectionEnabled = enabled
+        collectionEnabled.set(enabled)
     }
 
     override fun newTrace(name: String): PerformanceTrace {
         return PerformanceTraceJvm(
             name = name,
-            isCollectionEnabled = { collectionEnabled },
+            isCollectionEnabled = collectionEnabled::get,
             onStop = ::sendTraceInBackground,
         )
     }
@@ -76,13 +77,12 @@ class FirebasePerformanceJvm(
         return PerformanceHttpMetricJvm(
             url = url,
             httpMethod = httpMethod,
-            isCollectionEnabled = { collectionEnabled },
+            isCollectionEnabled = collectionEnabled::get,
             onStop = ::sendHttpMetricInBackground,
         )
     }
 
     internal suspend fun sendTrace(trace: PerformanceTraceJvm): HttpResponse {
-        delay(INITIAL_SEND_DELAY_MS)
         return postEvent(
             event = trace.toFirelogEvent(),
             eventTimeMs = trace.getEventTimeMs(),
@@ -90,7 +90,6 @@ class FirebasePerformanceJvm(
     }
 
     internal suspend fun sendHttpMetric(metric: PerformanceHttpMetricJvm): HttpResponse {
-        delay(INITIAL_SEND_DELAY_MS)
         return postEvent(
             event = metric.toFirelogEvent(),
             eventTimeMs = metric.getEventTimeMs(),
@@ -159,36 +158,37 @@ class PerformanceTraceJvm(
     private val isCollectionEnabled: () -> Boolean = { true },
     private val onStop: (PerformanceTraceJvm) -> Unit = {},
 ) : PerformanceTrace {
-    private val metrics = linkedMapOf<String, Long>()
-    private val attributes = linkedMapOf<String, String>()
-    private var startTimeUs: Long? = null
-    private var durationUs: Long? = null
-    private var eventTimeMs: Long? = null
-    private var started = false
-    private var stopped = false
+    private val metrics = ConcurrentHashMap<String, Long>()
+    private val attributes = ConcurrentHashMap<String, String>()
+    private val startTimeUs = AtomicReference<Long?>()
+    private val durationUs = AtomicReference<Long?>()
+    private val eventTimeMs = AtomicReference<Long?>()
+    private val started = AtomicBoolean(false)
+    private val stopped = AtomicBoolean(false)
 
     override fun start() {
         if (isCollectionEnabled().not()) return
 
-        startTimeUs = nowMicroseconds()
-        durationUs = null
-        started = true
-        stopped = false
+        startTimeUs.set(nowMicroseconds())
+        durationUs.set(null)
+        eventTimeMs.set(null)
+        started.set(true)
+        stopped.set(false)
     }
 
     override fun stop() {
-        if (isCollectionEnabled().not() || started.not()) return
+        if (isCollectionEnabled().not() || started.get().not()) return
+        if (stopped.compareAndSet(false, true).not()) return
 
-        durationUs = elapsedMicroseconds(startTimeUs)
-        eventTimeMs = nowMilliseconds()
-        stopped = true
+        durationUs.set(elapsedMicroseconds(startTimeUs.get()))
+        eventTimeMs.set(nowMilliseconds())
         onStop(this)
     }
 
     override fun incrementMetric(name: String, by: Long) {
         if (isCollectionEnabled().not()) return
 
-        metrics[name] = getMetric(name) + by
+        metrics.merge(name, by) { current, increment -> current + increment }
     }
 
     override fun putMetric(name: String, value: Long) {
@@ -222,6 +222,11 @@ class PerformanceTraceJvm(
     }
 
     internal fun toFirelogEvent(applicationInfo: JsonObject = firebaseApplicationInfo()): JsonObject {
+        val currentStartTimeUs = startTimeUs.get()
+        val currentDurationUs = durationUs.get()
+        val currentMetrics = metrics.toMap()
+        val currentAttributes = attributes.toMap()
+
         return buildJsonObject {
             put("application_info", applicationInfo)
             put(
@@ -229,21 +234,21 @@ class PerformanceTraceJvm(
                 buildJsonObject {
                     put("name", name)
                     put("is_auto", false)
-                    put("client_start_time_us", startTimeUs ?: nowMicroseconds())
-                    put("duration_us", durationUs ?: 0L)
-                    if (metrics.isNotEmpty()) {
+                    put("client_start_time_us", currentStartTimeUs ?: nowMicroseconds())
+                    put("duration_us", currentDurationUs ?: 0L)
+                    if (currentMetrics.isNotEmpty()) {
                         put(
                             "counters",
                             buildJsonObject {
-                                metrics.forEach { (name, value) -> put(name, value) }
+                                currentMetrics.forEach { (name, value) -> put(name, value) }
                             }
                         )
                     }
-                    if (attributes.isNotEmpty()) {
+                    if (currentAttributes.isNotEmpty()) {
                         put(
                             "custom_attributes",
                             buildJsonObject {
-                                attributes.forEach { (name, value) -> put(name, value) }
+                                currentAttributes.forEach { (name, value) -> put(name, value) }
                             }
                         )
                     }
@@ -252,11 +257,11 @@ class PerformanceTraceJvm(
         }
     }
 
-    internal fun isStarted(): Boolean = started
+    internal fun isStarted(): Boolean = started.get()
 
-    internal fun isStopped(): Boolean = stopped
+    internal fun isStopped(): Boolean = stopped.get()
 
-    internal fun getEventTimeMs(): Long = eventTimeMs ?: nowMilliseconds()
+    internal fun getEventTimeMs(): Long = eventTimeMs.get() ?: nowMilliseconds()
 }
 
 class PerformanceHttpMetricJvm(
@@ -265,57 +270,58 @@ class PerformanceHttpMetricJvm(
     private val isCollectionEnabled: () -> Boolean = { true },
     private val onStop: (PerformanceHttpMetricJvm) -> Unit = {},
 ) : PerformanceHttpMetric {
-    private val attributes = linkedMapOf<String, String>()
-    private var startTimeUs: Long? = null
-    private var durationUs: Long? = null
-    private var eventTimeMs: Long? = null
-    private var started = false
-    private var stopped = false
-    private var requestPayloadSize: Long? = null
-    private var responsePayloadSize: Long? = null
-    private var httpResponseCode: Int? = null
-    private var responseContentType: String? = null
+    private val attributes = ConcurrentHashMap<String, String>()
+    private val startTimeUs = AtomicReference<Long?>()
+    private val durationUs = AtomicReference<Long?>()
+    private val eventTimeMs = AtomicReference<Long?>()
+    private val started = AtomicBoolean(false)
+    private val stopped = AtomicBoolean(false)
+    private val requestPayloadSize = AtomicReference<Long?>()
+    private val responsePayloadSize = AtomicReference<Long?>()
+    private val httpResponseCode = AtomicReference<Int?>()
+    private val responseContentType = AtomicReference<String?>()
 
     override fun start() {
         if (isCollectionEnabled().not()) return
 
-        startTimeUs = nowMicroseconds()
-        durationUs = null
-        started = true
-        stopped = false
+        startTimeUs.set(nowMicroseconds())
+        durationUs.set(null)
+        eventTimeMs.set(null)
+        started.set(true)
+        stopped.set(false)
     }
 
     override fun stop() {
-        if (isCollectionEnabled().not() || started.not()) return
+        if (isCollectionEnabled().not() || started.get().not()) return
+        if (stopped.compareAndSet(false, true).not()) return
 
-        durationUs = elapsedMicroseconds(startTimeUs)
-        eventTimeMs = nowMilliseconds()
-        stopped = true
+        durationUs.set(elapsedMicroseconds(startTimeUs.get()))
+        eventTimeMs.set(nowMilliseconds())
         onStop(this)
     }
 
     override fun setRequestPayloadSize(bytes: Long) {
         if (isCollectionEnabled().not()) return
 
-        requestPayloadSize = bytes
+        requestPayloadSize.set(bytes)
     }
 
     override fun setResponsePayloadSize(bytes: Long) {
         if (isCollectionEnabled().not()) return
 
-        responsePayloadSize = bytes
+        responsePayloadSize.set(bytes)
     }
 
     override fun setHttpResponseCode(code: Int) {
         if (isCollectionEnabled().not()) return
 
-        httpResponseCode = code
+        httpResponseCode.set(code)
     }
 
     override fun setResponseContentType(contentType: String?) {
         if (isCollectionEnabled().not()) return
 
-        responseContentType = contentType
+        responseContentType.set(contentType)
     }
 
     override fun putAttribute(name: String, value: String) {
@@ -339,6 +345,14 @@ class PerformanceHttpMetricJvm(
     }
 
     internal fun toFirelogEvent(applicationInfo: JsonObject = firebaseApplicationInfo()): JsonObject {
+        val currentStartTimeUs = startTimeUs.get()
+        val currentDurationUs = durationUs.get()
+        val currentAttributes = attributes.toMap()
+        val currentRequestPayloadSize = requestPayloadSize.get()
+        val currentResponsePayloadSize = responsePayloadSize.get()
+        val currentHttpResponseCode = httpResponseCode.get()
+        val currentResponseContentType = responseContentType.get()
+
         return buildJsonObject {
             put("application_info", applicationInfo)
             put(
@@ -346,14 +360,14 @@ class PerformanceHttpMetricJvm(
                 buildJsonObject {
                     put("name", HTTP_METRIC_TRACE_NAME)
                     put("is_auto", false)
-                    put("client_start_time_us", startTimeUs ?: nowMicroseconds())
-                    put("duration_us", durationUs ?: 0L)
+                    put("client_start_time_us", currentStartTimeUs ?: nowMicroseconds())
+                    put("duration_us", currentDurationUs ?: 0L)
                     put(
                         "counters",
                         buildJsonObject {
-                            put(HTTP_RESPONSE_CODE_METRIC, httpResponseCode ?: 0)
-                            put(REQUEST_PAYLOAD_SIZE_METRIC, requestPayloadSize ?: 0L)
-                            put(RESPONSE_PAYLOAD_SIZE_METRIC, responsePayloadSize ?: 0L)
+                            put(HTTP_RESPONSE_CODE_METRIC, currentHttpResponseCode ?: 0)
+                            put(REQUEST_PAYLOAD_SIZE_METRIC, currentRequestPayloadSize ?: 0L)
+                            put(RESPONSE_PAYLOAD_SIZE_METRIC, currentResponsePayloadSize ?: 0L)
                         }
                     )
                     put(
@@ -361,8 +375,8 @@ class PerformanceHttpMetricJvm(
                         buildJsonObject {
                             put(URL_ATTRIBUTE, url.substringBefore("?"))
                             put(HTTP_METHOD_ATTRIBUTE, httpMethod)
-                            attributes.forEach { (name, value) -> put(name, value) }
-                            responseContentType?.let { put(RESPONSE_CONTENT_TYPE_ATTRIBUTE, it) }
+                            currentAttributes.forEach { (name, value) -> put(name, value) }
+                            currentResponseContentType?.let { put(RESPONSE_CONTENT_TYPE_ATTRIBUTE, it) }
                         }
                     )
                 }
@@ -370,19 +384,19 @@ class PerformanceHttpMetricJvm(
         }
     }
 
-    internal fun isStarted(): Boolean = started
+    internal fun isStarted(): Boolean = started.get()
 
-    internal fun isStopped(): Boolean = stopped
+    internal fun isStopped(): Boolean = stopped.get()
 
-    internal fun getRequestPayloadSize(): Long? = requestPayloadSize
+    internal fun getRequestPayloadSize(): Long? = requestPayloadSize.get()
 
-    internal fun getResponsePayloadSize(): Long? = responsePayloadSize
+    internal fun getResponsePayloadSize(): Long? = responsePayloadSize.get()
 
-    internal fun getHttpResponseCode(): Int? = httpResponseCode
+    internal fun getHttpResponseCode(): Int? = httpResponseCode.get()
 
-    internal fun getResponseContentType(): String? = responseContentType
+    internal fun getResponseContentType(): String? = responseContentType.get()
 
-    internal fun getEventTimeMs(): Long = eventTimeMs ?: nowMilliseconds()
+    internal fun getEventTimeMs(): Long = eventTimeMs.get() ?: nowMilliseconds()
 
     companion object {
         const val HTTP_METRIC_TRACE_NAME = "http_metric"

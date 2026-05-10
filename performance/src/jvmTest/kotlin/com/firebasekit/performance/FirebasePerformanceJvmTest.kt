@@ -7,6 +7,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.put
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -109,6 +112,32 @@ class FirebasePerformanceJvmTest {
     }
 
     @Test
+    fun traceMetrics_areThreadSafe() {
+        val trace = PerformanceTraceJvm("checkout")
+
+        repeatConcurrently {
+            repeat(1_000) {
+                trace.incrementMetric("items")
+            }
+        }
+
+        assertEquals(8_000L, trace.getMetric("items"))
+    }
+
+    @Test
+    fun httpMetricAttributes_areThreadSafe() {
+        val metric = PerformanceHttpMetricJvm("https://example.com/products", "GET")
+
+        repeatConcurrently { workerIndex ->
+            repeat(1_000) { attributeIndex ->
+                metric.putAttribute("key-$workerIndex-$attributeIndex", "value")
+            }
+        }
+
+        assertEquals(8_000, metric.getAttributes().size)
+    }
+
+    @Test
     fun httpMetricFirelogEvent_usesHttpMetricTraceShape() {
         val metric = PerformanceHttpMetricJvm("https://firebase.google.com/docs/perf-mon?hl=en", "GET")
 
@@ -139,5 +168,26 @@ class FirebasePerformanceJvmTest {
     private fun fakeApplicationInfo(): JsonObject = buildJsonObject {
         put("google_app_id", "1:388792860519:web:cd3070888b06d607be39c2")
         put("app_instance_id", "cq_Pek91ljz_V98tFqhZtJ")
+    }
+
+    private fun repeatConcurrently(
+        workers: Int = 8,
+        block: (workerIndex: Int) -> Unit,
+    ) {
+        val executor = Executors.newFixedThreadPool(workers)
+        val start = CountDownLatch(1)
+        val done = CountDownLatch(workers)
+
+        repeat(workers) { workerIndex ->
+            executor.execute {
+                start.await()
+                block(workerIndex)
+                done.countDown()
+            }
+        }
+
+        start.countDown()
+        assertTrue(done.await(10, TimeUnit.SECONDS))
+        executor.shutdownNow()
     }
 }
