@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-version = "0.2.0-rc3"
+version = providers.gradleProperty("firebaseKitVersion").get()
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -33,7 +33,7 @@ kotlin {
     swiftPMDependencies {
         swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
-            version = from("12.12.0"),
+            version = from(libs.versions.firebase.swiftPM.get()),
             products = listOf(product("FirebaseRemoteConfig")),
             importedClangModules = listOf("FirebaseRemoteConfigInternal"),
         )

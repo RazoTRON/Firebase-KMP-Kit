@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.razotron.firebase-kit"
-version = "0.2.0-rc4"
+version = providers.gradleProperty("firebaseKitVersion").get()
 
 gradlePlugin {
     plugins {

@@ -8,7 +8,7 @@ plugins {
     id("publication")
 }
 
-version = "0.2.0-rc3"
+version = providers.gradleProperty("firebaseKitVersion").get()
 
 kotlin {
     val xcf = XCFramework("FirebaseKitAnalytics")
@@ -32,7 +32,7 @@ kotlin {
     swiftPMDependencies {
         swiftPackage(
             url = url("https://github.com/firebase/firebase-ios-sdk.git"),
-            version = from("12.12.0"),
+            version = from(libs.versions.firebase.swiftPM.get()),
             products = listOf(product("FirebaseAnalytics")),
             importedClangModules = listOf("FirebaseAnalytics"),
         )
