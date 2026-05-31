@@ -15,7 +15,6 @@ suspend fun Firebase.initialize(
     webVapidKey: String? = null,
     measurementProtocolApiSecret: String? = null,
     measurementId: String? = null,
-    interval: Duration = 60.minutes,
     cacheFilePath: String = "cache/firebase_data"
 ) {
     FirebaseJvm.initialize(
@@ -28,7 +27,6 @@ suspend fun Firebase.initialize(
         webVapidKey = webVapidKey,
         analyticsApiSecret = measurementProtocolApiSecret,
         measurementId = measurementId,
-        intervalSeconds = interval,
         cacheFilePath = cacheFilePath
     )
 }
@@ -54,8 +52,6 @@ object FirebaseJvm {
         private set
     var measurementId: String? = null
         private set
-    var interval: Duration? = null
-        private set
     var clientId: String? = null
         private set
     var fid: String? = null
@@ -72,7 +68,6 @@ object FirebaseJvm {
         webVapidKey: String?,
         analyticsApiSecret: String?,
         measurementId: String?,
-        intervalSeconds: Duration,
         cacheFilePath: String
     ) {
         this.apiKey = apiKey
@@ -84,7 +79,6 @@ object FirebaseJvm {
         this.webVapidKey = webVapidKey
         this.analyticsApiSecret = analyticsApiSecret
         this.measurementId = measurementId
-        this.interval = intervalSeconds
 
         firebaseCache.init(cacheFilePath)
 

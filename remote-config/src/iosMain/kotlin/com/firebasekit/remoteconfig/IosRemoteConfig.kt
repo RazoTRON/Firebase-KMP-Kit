@@ -9,7 +9,7 @@ import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
 import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigSettings
 
 @OptIn(ExperimentalForeignApi::class)
-interface RemoteConfig {
+interface IosRemoteConfig {
     val configSettings: Settings
     val lastFetchStatus: FIRRemoteConfigFetchStatus
     val lastFetchTime: NSDate?
@@ -36,9 +36,9 @@ interface RemoteConfig {
 @OptIn(ExperimentalForeignApi::class)
 class FIRRemoteConfigBridge(
     private val native: FIRRemoteConfig = FIRRemoteConfig.remoteConfig()
-) : RemoteConfig {
+) : IosRemoteConfig {
 
-    override val configSettings: RemoteConfig.Settings
+    override val configSettings: IosRemoteConfig.Settings
         get() = SettingsAdapter(native.configSettings)
 
     override val lastFetchStatus: FIRRemoteConfigFetchStatus
@@ -49,7 +49,7 @@ class FIRRemoteConfigBridge(
 
     override fun keysWithPrefix(prefix: String): Set<*> = native.keysWithPrefix(prefix)
 
-    override fun configValueForKey(key: String): RemoteConfig.Value = ValueAdapter(native, key)
+    override fun configValueForKey(key: String): IosRemoteConfig.Value = ValueAdapter(native, key)
 
     override fun fetchAndActivateWithCompletionHandler(
         completionHandler: ((FIRRemoteConfigFetchAndActivateStatus, NSError?) -> Unit)?
@@ -57,7 +57,7 @@ class FIRRemoteConfigBridge(
 
     private class SettingsAdapter(
         private val native: FIRRemoteConfigSettings
-    ) : RemoteConfig.Settings {
+    ) : IosRemoteConfig.Settings {
         override val minimumFetchInterval: Double
             get() = native.minimumFetchInterval
     }
@@ -65,7 +65,7 @@ class FIRRemoteConfigBridge(
     private class ValueAdapter(
         private val native: FIRRemoteConfig,
         private val key: String,
-    ) : RemoteConfig.Value {
+    ) : IosRemoteConfig.Value {
         override val boolValue: Boolean get() = native.configValueForKey(key).boolValue
         override val stringValue: String get() = native.configValueForKey(key).stringValue
         override val longValue: Long get() = native.configValueForKey(key).numberValue.longValue

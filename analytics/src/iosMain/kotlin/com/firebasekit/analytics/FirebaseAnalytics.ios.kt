@@ -2,6 +2,7 @@ package com.firebasekit.analytics
 
 import com.firebasekit.core.Firebase
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonPrimitive
 
 actual val Firebase.analytics: FirebaseAnalytics
     get() = FirebaseAnalyticsIos()
@@ -40,6 +41,8 @@ private fun Bundle.toNativeParameters(): Map<Any?, *>? {
 
 private fun BundleValue.toNativeValue(): Any = when (this) {
     is BundleValue.StringValue -> value
+    is BundleValue.IntValue -> value
+    is BundleValue.FloatValue -> value
     is BundleValue.LongValue -> value
     is BundleValue.DoubleValue -> value
     is BundleValue.BooleanValue -> if (value) 1L else 0L

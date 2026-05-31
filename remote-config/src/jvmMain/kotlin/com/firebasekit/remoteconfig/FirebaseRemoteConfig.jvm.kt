@@ -2,7 +2,6 @@ package com.firebasekit.remoteconfig
 
 import com.firebasekit.core.Firebase
 import com.firebasekit.core.FirebaseJvm
-import com.firebasekit.core.models.InstallationResponse
 import com.firebasekit.remoteconfig.models.RemoteConfigRequestBody
 import com.firebasekit.remoteconfig.models.RemoteConfigResponse
 import io.ktor.client.HttpClient
@@ -16,7 +15,6 @@ import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
@@ -24,11 +22,11 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import kotlin.time.Duration.Companion.minutes
 
-actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy {
+internal val remoteConfigJvm: FirebaseRemoteConfigJvm by lazy {
     val client = HttpClient(Java) {
         install(ContentNegotiation) {
             json(Json { ignoreUnknownKeys = true })
@@ -47,18 +45,18 @@ actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy {
     FirebaseRemoteConfigJvm(client)
 }
 
-class FirebaseRemoteConfigJvm(private val client: HttpClient) : FirebaseRemoteConfig {
+actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy { remoteConfigJvm }
+
+class FirebaseRemoteConfigJvm(private val client: HttpClient) : JvmRemoteConfig() {
     private val configValues = mutableMapOf<String, String>()
-    private val defaultRefreshInterval = 60.minutes
 
     override suspend fun fetchAndActivate() {
-        val updateInterval = FirebaseJvm.interval ?: defaultRefreshInterval
-        updateRemoteConfigs(FirebaseJvm)
-
         CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
-                delay(updateInterval)
-                updateRemoteConfigs(FirebaseJvm)
+            settings.refreshInterval.collectLatest {
+                while (true) {
+                    updateRemoteConfigs(FirebaseJvm)
+                    delay(it)
+                }
             }
         }
     }

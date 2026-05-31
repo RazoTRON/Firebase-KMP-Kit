@@ -63,6 +63,12 @@ internal sealed interface BundleValue {
     value class StringValue(override val value: String) : BundleValue
 
     @JvmInline
+    value class IntValue(override val value: Int) : BundleValue
+
+    @JvmInline
+    value class FloatValue(override val value: Float) : BundleValue
+
+    @JvmInline
     value class LongValue(override val value: Long) : BundleValue
 
     @JvmInline

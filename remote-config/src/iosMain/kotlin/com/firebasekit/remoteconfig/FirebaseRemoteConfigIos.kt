@@ -12,11 +12,10 @@ import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigIos()
+actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy { FirebaseRemoteConfigIos() }
 
 @OptIn(ExperimentalForeignApi::class)
-class FirebaseRemoteConfigIos(private val remoteConfig: RemoteConfig = FIRRemoteConfigBridge()) : FirebaseRemoteConfig {
+class FirebaseRemoteConfigIos(internal val remoteConfig: IosRemoteConfig = FIRRemoteConfigBridge()) : FirebaseRemoteConfig {
     override suspend fun fetchAndActivate() {
         suspendCancellableCoroutine { cont ->
             remoteConfig.fetchAndActivateWithCompletionHandler { status, error ->

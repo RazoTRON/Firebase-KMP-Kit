@@ -73,6 +73,7 @@ kotlin {
 
         androidUnitTest.dependencies {
             implementation(libs.mockk)
+            implementation(libs.robolectric)
         }
     }
 }

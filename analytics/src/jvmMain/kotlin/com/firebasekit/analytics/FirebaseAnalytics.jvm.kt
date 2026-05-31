@@ -146,6 +146,8 @@ class FirebaseAnalyticsJvm(
 
     private fun BundleValue.toJsonElement(): JsonElement = when (this) {
         is BundleValue.StringValue -> JsonPrimitive(value)
+        is BundleValue.IntValue -> JsonPrimitive(value)
+        is BundleValue.FloatValue -> JsonPrimitive(value)
         is BundleValue.LongValue -> JsonPrimitive(value)
         is BundleValue.DoubleValue -> JsonPrimitive(value)
         is BundleValue.BooleanValue -> JsonPrimitive(if (value) 1L else 0L)

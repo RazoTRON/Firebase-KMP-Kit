@@ -14,15 +14,17 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class FirebaseAnalyticsAndroidTest {
-
     private val mockInstance: AndroidFirebaseAnalytics = mockk(relaxUnitFun = true)
 
     private fun sut() = FirebaseAnalyticsAndroid(mockInstance)
 
     @Test
-    fun logEvent_passesNullBundle_whenParametersAreEmpty() {
+    fun logEvent_passesNullParameters_whenBundleIsEmpty() {
         sut().logEvent("app_open")
 
         verify(exactly = 1) { mockInstance.logEvent("app_open", null) }
