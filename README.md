@@ -12,14 +12,15 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 - ⚙️ API fully aligned with the official Firebase SDK.
 - 🔄 Built with **Kotlin Coroutines** and **Flow** for reactive and asynchronous programming.
 - 🔗 Uses **Kotlinx Serialization** for consistent cross-platform JSON handling.
-- ✅ Comprehensive test coverage across all supported platforms.
 
 ## Supported Targets
 
 | Module          | Android | iOS | JS | Wasm | Desktop | Description                                                   |
 |-----------------|:-------:|:---:|:--:|:----:|:-------:|---------------------------------------------------------------|
+| `analytics`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Analytics event logging and user properties          |
 | `core`          |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                    |
-| `messaging`     |    ✅    |  ✅  | ❌  |  ❌   |    ❌    | Firebase Cloud Messaging token + topic APIs         |
+| `messaging`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Cloud Messaging token APIs; Desktop uses a browser bridge |
+| `performance`   |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Performance Monitoring custom traces and HTTP metrics |
 | `remote-config` |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Remote Config |
 
 ### KMP Target Names
@@ -39,11 +40,55 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.razotron.firebase-kit:remote-config:0.2.0-rc3")
-            implementation("io.github.razotron.firebase-kit:messaging:0.2.0-rc3")
+            implementation("io.github.razotron.firebase-kit:analytics:0.3.1")
+            implementation("io.github.razotron.firebase-kit:remote-config:0.3.1")
+            implementation("io.github.razotron.firebase-kit:messaging:0.3.1")
+            implementation("io.github.razotron.firebase-kit:performance:0.3.1")
         }
     }
 }
+```
+
+## Analytics - Common API
+
+Android, iOS, JS, and Wasm expose `Firebase.analytics` for Firebase Analytics event logging:
+
+```kotlin
+// commonMain
+
+Firebase.analytics.logEvent(
+    name = "purchase",
+    parameters = Bundle().apply {
+        put("item_id", "pizza")
+        put("quantity", 1)
+        put("price", 12.5)
+        put("is_featured", true)
+    }
+)
+
+Firebase.analytics.setUserId("user-42")
+Firebase.analytics.setUserProperty("favorite_food", "pizza")
+Firebase.analytics.setAnalyticsCollectionEnabled(true)
+Firebase.analytics.resetAnalyticsData()
+```
+
+`Bundle` also supports serializable payloads via `kotlinx.serialization`:
+
+```kotlin
+// commonMain
+
+@Serializable
+data class PurchaseMeta(
+    val coupon: String,
+    val source: String,
+)
+
+Firebase.analytics.logEvent(
+    name = "purchase_meta",
+    parameters = Bundle().apply {
+        put("meta", PurchaseMeta(coupon = "SPRING", source = "banner"), PurchaseMeta.serializer())
+    }
+)
 ```
 
 ## Installation (only iOS targets)
@@ -72,53 +117,61 @@ val limit: Int?     = Firebase.remoteConfig.getInt("key")
 val json: String?   = Firebase.remoteConfig.allToJson()
 ```
 
-`fetchAndActivate()` is a `suspend` function -- call it from a coroutine scope:
+## Messaging
 
 ```kotlin
-val remoteConfigData = flow {
-    Firebase.remoteConfig.fetchAndActivate()
-    emit(Firebase.remoteConfig.allToJson())
-}.catch { emit("Error: ${it.message}") }
-```
+// commonMain
 
-## Messaging - Common API
-
-Android and iOS share the same `FirebaseMessaging` interface, accessed via `Firebase.messaging`:
-
-```kotlin
 // Read the current default FCM registration token
 val token: String = Firebase.messaging.getToken()
 
 // Delete the current default FCM registration token
 Firebase.messaging.deleteToken()
-
-// Manage topic subscriptions
-Firebase.messaging.subscribeToTopic("news")
-Firebase.messaging.unsubscribeFromTopic("news")
 ```
 
-All Messaging operations are `suspend` functions.
+Android and iOS also expose topic subscription APIs from their platform source sets. Web exposes foreground `onMessage(...)`, and Desktop uses a local browser bridge for token creation and message delivery.
+
+See the full [Messaging module guide](messaging/README.md) for installation, platform setup, target differences, and sample app usage.
+
+## Performance
+
+```kotlin
+// commonMain
+
+val trace = Firebase.performance.newTrace("checkout_flow")
+trace.start()
+trace.putAttribute("source", "cart")
+trace.incrementMetric("items")
+trace.stop()
+
+val metric = Firebase.performance.newHttpMetric("https://example.com/products", "GET")
+metric.start()
+metric.setHttpResponseCode(200)
+metric.setResponsePayloadSize(2048)
+metric.stop()
+```
+
+See the full [Performance module guide](performance/README.md) for installation, platform setup, target differences, and sample app usage.
 
 ## Platform Setup
 
-Each platform requires a one-time `Firebase.initialize()` call before accessing `Firebase.remoteConfig` or `Firebase.messaging`.
+Each platform requires a one-time `Firebase.initialize()` call before accessing Firebase services.
 
 ### Android
 
 Add the dependency and the Google Services plugin to your app module:
 
 ```kotlin
-// build.gradle.kts
+// build.gradle.kts of android target module
 plugins {
     id("com.google.gms.google-services")
 }
 ```
 
-Place your `google-services.json` in the `app` module, then initialize:
+Place your `google-services.json` in the `app` module of android target, then initialize:
 
 ```kotlin
-import com.firebasekit.core.Firebase
-import com.firebasekit.core.initialize
+// androidMain
 
 class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -130,16 +183,14 @@ class AppActivity : ComponentActivity() {
 
 ### iOS
 
-Add the Firebase iOS SDK to your Xcode project (via SPM or CocoaPods), then add a `GoogleService-Info.plist` to your app target.
+Add a `GoogleService-Info.plist` to your app target.
 
 Initialize from Kotlin shared code:
 
 ```kotlin
-// shared/src/iosMain
-import com.firebasekit.core.Firebase
-import com.firebasekit.core.initialize
+// iosMain
 
-fun Configure() {
+fun FirebaseConfigure() {
     Firebase.initialize()
 }
 ```
@@ -149,10 +200,12 @@ Call from Swift:
 ```swift
 import shared
 
-struct ContentView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UIViewController {
-        FirebaseKt.Configure()
-        return MainKt.MainViewController()
+final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    func application(
+            _ application: UIApplication,
+            didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
+        FirebaseKt.ConfigureFirebase()
     }
 }
 ```
@@ -162,69 +215,44 @@ struct ContentView: UIViewControllerRepresentable {
 Initialize with your full Firebase web config:
 
 ```kotlin
-import com.firebasekit.core.Firebase
-import com.firebasekit.core.initialize
+// webMain/jsMain/wasmMain
 
-fun main() {
-    Firebase.initialize(
-        apiKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAA",
-        projectId = "your-project-id",
-        appId = "1.1111111111:web:AAAAAAAAAAAAAAAAA",
-        authDomain = "your-project-firebase.firebaseapp.com",
-        storageBucket = "your-project-firebase.firebasestorage.app",
-        messagingSenderId = "11111111111111",
-        measurementId = "A-AAAAAAAAAA",
-    )
-}
+Firebase.initialize(
+    apiKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAA",
+    projectId = "your-project-id",
+    appId = "1.1111111111:web:AAAAAAAAAAAAAAAAA",
+    authDomain = "your-project-firebase.firebaseapp.com",
+    storageBucket = "your-project-firebase.firebasestorage.app",
+    messagingSenderId = "11111111111111",
+    measurementId = "A-AAAAAAAAAA",
+)
 ```
-**Note:**
-> The web target wraps the Firebase JS SDK (`firebase@10.13.2`).
-
-### Messaging Notes
-
-#### Android
-
-Messaging uses the native Firebase Android SDK. The same `google-services` setup and `Firebase.initialize(this)` call shown above are enough for token and topic operations.
-
-#### iOS
-
-Messaging uses the native Firebase iOS SDK. Your app target still owns notification permission requests, APNs capability setup, and `registerForRemoteNotifications()`.
-
-If you disable Firebase Messaging method swizzling, forward the APNs device token manually:
-
-```kotlin
-import com.firebasekit.messaging.setFirebaseMessagingApnsToken
-import platform.Foundation.NSData
-
-fun forwardApnsToken(token: NSData) {
-    setFirebaseMessagingApnsToken(token)
-}
-```
-
-The current `messaging` module does not abstract foreground/background message delivery delegates.
 
 ### Desktop (JVM)
 
 Initialize before creating the UI:
 
 ```kotlin
-import com.firebasekit.core.Firebase
-import com.firebasekit.core.initialize
+// desktopMain
 
-fun main() {
-    Firebase.initialize(
-        apiKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAA",
-        projectId = "your-project-id",
-        appId = "1.1111111111:web:AAAAAAAAAAAAAAAAA",
-        interval = 60.minutes,           // optional: auto-refresh interval
-        cacheFilePath = "cache/firebase_data" // optional: FID cache location
-    )
-}
+Firebase.initialize(
+    apiKey = "AAAAAAAAAAAAAAAAAAAAAAAAAAAA-AAAAAAAAAAA",
+    projectId = "your-project-id",
+    appId = "1.1111111111:web:AAAAAAAAAAAAAAAAA",
+    authDomain = "your-project-firebase.firebaseapp.com", // optional, defaults from projectId
+    storageBucket = "your-project-firebase.firebasestorage.app", // optional
+    messagingSenderId = "11111111111111", // required for messaging
+    webVapidKey = "YOUR_WEB_PUSH_CERTIFICATE_KEY_PAIR", // required for messaging
+    measurementProtocolApiSecret = "your-measurement-protocol-secret", // optional, required for analytics
+    cacheFilePath = "cache/firebase_data" // optional: FID cache location
+)
 ```
 
-The JVM target connects to Firebase via the REST API using Ktor. It requires your Firebase project's API key, project ID, and app ID.
+The JVM target connects to Firebase via REST APIs using Ktor. Remote Config requires your Firebase project's API key, project ID, and app ID. Analytics uses GA4 Measurement Protocol and also requires a Measurement Protocol API secret from Google Analytics.
 
 The desktop implementation automatically re-fetches config on the specified interval (defaults to 60 minutes). A Firebase Installation ID (FID) is generated and cached locally at `cacheFilePath`.
+
+Desktop Messaging uses a local loopback browser bridge. See the [Messaging module guide](messaging/README.md) for token caching, foreground message handling, and target-specific setup.
 
 ## License
 
