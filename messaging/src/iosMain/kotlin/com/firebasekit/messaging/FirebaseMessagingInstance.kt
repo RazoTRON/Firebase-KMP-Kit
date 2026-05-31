@@ -9,8 +9,7 @@ import swiftPMImport.com.firebasekit.messaging.FIRMessagingAPNSTokenType
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-actual val Firebase.messaging: FirebaseMessaging
-    get() = FirebaseMessagingIos()
+actual val Firebase.messaging: FirebaseMessaging by lazy { FirebaseMessagingIos() }
 
 @OptIn(ExperimentalForeignApi::class)
 class FirebaseMessagingIos(
@@ -83,14 +82,14 @@ internal interface ApnsTokenAwareFirebaseMessaging {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun setFirebaseMessagingApnsToken(apnsToken: NSData) {
+fun Firebase.setApnsToken(apnsToken: NSData) {
     val messaging = Firebase.messaging as? ApnsTokenAwareFirebaseMessaging
         ?: throw UnsupportedOperationException(UNSUPPORTED_MESSAGE)
     messaging.setApnsToken(apnsToken)
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun setFirebaseMessagingApnsToken(
+fun Firebase.setApnsToken(
     apnsToken: NSData,
     type: FIRMessagingAPNSTokenType,
 ) {
