@@ -10,8 +10,7 @@ import com.firebasekit.messaging.bridge.NativeMessaging
 import com.firebasekit.messaging.bridge.models.MessagePayload
 import com.firebasekit.messaging.bridge.nativeOnMessage
 
-actual val Firebase.messaging: FirebaseMessaging
-    get() = FirebaseMessagingWeb()
+actual val Firebase.messaging: FirebaseMessaging by lazy { FirebaseMessagingWeb() }
 
 class FirebaseMessagingWeb(private val bridge: Messaging = FirebaseMessagingBridge()) : FirebaseMessaging {
     private val instance: NativeMessaging by lazy {

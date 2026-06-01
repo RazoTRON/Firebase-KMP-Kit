@@ -4,8 +4,7 @@ import com.firebasekit.core.Firebase
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonPrimitive
 
-actual val Firebase.analytics: FirebaseAnalytics
-    get() = FirebaseAnalyticsIos()
+actual val Firebase.analytics: FirebaseAnalytics by lazy { FirebaseAnalyticsIos() }
 
 class FirebaseAnalyticsIos(
     private val analytics: AnalyticsBridge = FIRAnalyticsBridge(),

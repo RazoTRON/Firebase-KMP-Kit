@@ -9,8 +9,7 @@ import com.firebasekit.core.common.models.JsMap
 import com.firebasekit.core.common.utils.toJsMap
 import kotlin.js.ExperimentalWasmJsInterop
 
-actual val Firebase.analytics: FirebaseAnalytics
-    get() = FirebaseAnalyticsWeb()
+actual val Firebase.analytics: FirebaseAnalytics by lazy { FirebaseAnalyticsWeb() }
 
 @OptIn(ExperimentalWasmJsInterop::class)
 class FirebaseAnalyticsWeb(
