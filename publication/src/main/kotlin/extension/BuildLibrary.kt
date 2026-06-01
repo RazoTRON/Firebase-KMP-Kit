@@ -4,12 +4,15 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.register
 
-fun Project.buildLibrary() {
+fun Project.buildLibrary(libraryName: String) {
+    val xcFrameworkTaskName = "assemble${libraryName}XCFramework"
+    val archiveName = "$libraryName.xcframework.zip"
+
     tasks.register<Zip>("zipXCFramework") {
         group = "build"
-        dependsOn("assembleFirebaseKitRemoteConfigXCFramework")
+        dependsOn(xcFrameworkTaskName)
 
-        archiveFileName.set("FirebaseKitRemoteConfig.xcframework.zip")
+        archiveFileName.set(archiveName)
         destinationDirectory.set(rootProject.projectDir)
 
         from(file("$projectDir/build/XCFrameworks/release"))
@@ -28,17 +31,17 @@ fun Project.buildLibrary() {
                 import PackageDescription
 
                 let package = Package(
-                   name: "FirebaseKitRemoteConfig",
+                   name: "$libraryName",
                    platforms: [
                      .iOS(.v16),
                    ],
                    products: [
-                      .library(name: "FirebaseKitRemoteConfig", targets: ["Shared"])
+                      .library(name: "$libraryName", targets: ["Shared"])
                    ],
                    targets: [
                       .binaryTarget(
                           name: "Shared",
-                          path: "FirebaseKitRemoteConfig.xcframework.zip"
+                          path: "$archiveName"
                       )
                    ]
                 )

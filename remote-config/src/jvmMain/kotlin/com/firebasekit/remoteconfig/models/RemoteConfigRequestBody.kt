@@ -10,8 +10,6 @@ data class RemoteConfigRequestBody(
     val appId: String,
     @SerialName("app_instance_id")
     val appInstanceId: String,
-    @SerialName("app_instance_id_token")
-    val appInstanceIdToken: String,
     @SerialName("language_code")
     val languageCode: String = "en-US",
     @SerialName("sdk_version")

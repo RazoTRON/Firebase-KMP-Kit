@@ -39,7 +39,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(projects.remoteConfig)
+            api(projects.performance)
+            api(projects.analytics)
+            api(projects.messaging)
+            api(projects.remoteConfig)
 
             api(libs.compose.runtime)
             api(libs.compose.ui)
@@ -49,6 +52,9 @@ kotlin {
             api(libs.compose.material3)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
         }
 
         commonTest.dependencies {
@@ -59,6 +65,11 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.ktor.client.android)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
 
         jvmMain.dependencies {
@@ -69,15 +80,18 @@ kotlin {
 
     // Generate BuildConfig for the sample module (available from commonMain)
     buildConfig {
-         packageName("com.firebasekit")
-         useKotlinOutput { internalVisibility = false }
-         buildConfigField("FIREBASE_API_KEY", properties.getProperty("FIREBASE_API_KEY"))
-         buildConfigField("FIREBASE_PROJECT_ID", properties.getProperty("FIREBASE_PROJECT_ID"))
-         buildConfigField("FIREBASE_APP_ID", properties.getProperty("FIREBASE_APP_ID"))
-         buildConfigField("FIREBASE_MESSAGING_SENDER_ID", properties.getProperty("FIREBASE_MESSAGING_SENDER_ID"))
-         buildConfigField("FIREBASE_STORAGE_BUCKET", properties.getProperty("FIREBASE_STORAGE_BUCKET"))
-         buildConfigField("FIREBASE_AUTH_DOMAIN", properties.getProperty("FIREBASE_AUTH_DOMAIN"))
-         buildConfigField("FIREBASE_MEASUREMENT_ID", properties.getProperty("FIREBASE_MEASUREMENT_ID"))
+        packageName("com.firebasekit")
+        useKotlinOutput { internalVisibility = false }
+        buildConfigField("FIREBASE_API_KEY", properties.getProperty("FIREBASE_API_KEY"))
+        buildConfigField("FIREBASE_PROJECT_ID", properties.getProperty("FIREBASE_PROJECT_ID"))
+        buildConfigField("FIREBASE_APP_ID", properties.getProperty("FIREBASE_APP_ID"))
+        buildConfigField("FIREBASE_MESSAGING_SENDER_ID", properties.getProperty("FIREBASE_MESSAGING_SENDER_ID"))
+        buildConfigField("FIREBASE_STORAGE_BUCKET", properties.getProperty("FIREBASE_STORAGE_BUCKET"))
+        buildConfigField("FIREBASE_AUTH_DOMAIN", properties.getProperty("FIREBASE_AUTH_DOMAIN"))
+        buildConfigField("FIREBASE_MEASUREMENT_ID", properties.getProperty("FIREBASE_MEASUREMENT_ID"))
+        buildConfigField("MEASUREMENT_PROTOCOL_API_SECRET", properties.getProperty("MEASUREMENT_PROTOCOL_API_SECRET"))
+        buildConfigField("FIREBASE_WEB_VAPID_KEY", properties.getProperty("FIREBASE_WEB_VAPID_KEY", ""))
+        buildConfigField("FIREBASE_FCM_ACCESS_TOKEN", properties.getProperty("FIREBASE_FCM_ACCESS_TOKEN", ""))
     }
 }
 

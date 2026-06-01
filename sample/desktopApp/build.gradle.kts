@@ -8,7 +8,6 @@ plugins {
 
 dependencies {
     implementation(projects.sample.shared)
-    implementation(projects.remoteConfig)
 }
 
 compose.desktop {
@@ -19,6 +18,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "sample"
             packageVersion = "1.0.0"
+            modules("jdk.httpserver")
 
             linux {
                 iconFile.set(project.file("appIcons/LinuxIcon.png"))

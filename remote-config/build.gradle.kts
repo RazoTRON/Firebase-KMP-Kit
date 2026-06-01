@@ -1,9 +1,7 @@
 import extension.buildLibrary
 import extension.defaultTargets
-import extension.publish.githubPublishConfiguration
-import extension.publish.publishAndroidLibraryToMavenLocal
+import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import task.generateDefFiles
 
 plugins {
     id("build-config")
@@ -11,8 +9,7 @@ plugins {
     alias(libs.plugins.kotlinx.serialization)
 }
 
-group = "com.firebasekit"
-version = "0.0.8"
+version = providers.gradleProperty("firebaseKitVersion").get()
 
 kotlin {
     val xcf = XCFramework("FirebaseKitRemoteConfig")
@@ -25,14 +22,28 @@ kotlin {
                 xcf.add(this)
                 isStatic = true
             }
-
-            it.compilations["main"].cinterops {
-                create("RemoteConfig") {
-                    defFile(project.layout.projectDirectory.file("src/interop/RemoteConfig.def"))
-                }
+        },
+        jsConfig = {
+            compilations["main"].packageJson {
+                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.get()))
             }
         }
     )
+
+    swiftPMDependencies {
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = from(libs.versions.firebase.swiftPM.get()),
+            products = listOf(product("FirebaseRemoteConfig")),
+            importedClangModules = listOf("FirebaseRemoteConfigInternal"),
+        )
+    }
+
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
 
     sourceSets {
         commonMain.dependencies {
@@ -51,12 +62,13 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.java)
+            implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
         webMain.dependencies {
-            implementation(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
+            api(devNpm("firebase", libs.versions.firebase.webNpm.get()))
         }
 
         commonTest.dependencies {
@@ -74,26 +86,10 @@ kotlin {
     }
 }
 
-generateDefFiles("RemoteConfig")
+buildLibrary(libraryName = "FirebaseKitRemoteConfig")
 
-buildLibrary()
-
-githubPublishConfiguration(
-    httpGitUrl = "https://github.com/RazoTRON/Firebase-KMP-Kit",
-    contactEmail = "vmihalatiuk@gmail.com",
-    owner = "RazoTRON",
-    repo = "Firebase-KMP-Kit",
-    groupId = project.group.toString(),
-    version = project.version.toString(),
-    projectName = project.name,
-    projectDescription = project.description.toString(),
-    developerId = "RazoTRON",
-    developerName = "Vladislav Mihalatiuk"
-)
-
-publishAndroidLibraryToMavenLocal(
-    groupId = project.group.toString(),
-    version = project.version.toString(),
-    projectName = project.name,
-    projectDescription = project.name
+publishLibrary(
+    name = "Firebase KMP Kit",
+    description = "A Kotlin Multiplatform library that provides Firebase Services in common code.",
+    artifactId = "remote-config"
 )

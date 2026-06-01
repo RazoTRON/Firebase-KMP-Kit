@@ -12,8 +12,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
-actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigAndroid()
+actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy { FirebaseRemoteConfigAndroid() }
 
 class FirebaseRemoteConfigAndroid(
     remoteConfig: AndroidRemoteConfig = AndroidFirebase.remoteConfig,

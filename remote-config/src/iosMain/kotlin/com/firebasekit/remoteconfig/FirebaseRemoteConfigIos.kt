@@ -1,22 +1,21 @@
 package com.firebasekit.remoteconfig
 
 import com.firebasekit.core.Firebase
-import com.firebasekit.native.FIRRemoteConfigFetchAndActivateStatus
-import com.firebasekit.native.FIRRemoteConfigFetchStatus
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 import kotlinx.datetime.toKotlinInstant
 import kotlinx.serialization.json.Json
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchAndActivateStatus
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigIos()
+actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy { FirebaseRemoteConfigIos() }
 
 @OptIn(ExperimentalForeignApi::class)
-class FirebaseRemoteConfigIos(private val remoteConfig: RemoteConfig = FIRRemoteConfigBridge()) : FirebaseRemoteConfig {
+class FirebaseRemoteConfigIos(internal val remoteConfig: IosRemoteConfig = FIRRemoteConfigBridge()) : FirebaseRemoteConfig {
     override suspend fun fetchAndActivate() {
         suspendCancellableCoroutine { cont ->
             remoteConfig.fetchAndActivateWithCompletionHandler { status, error ->

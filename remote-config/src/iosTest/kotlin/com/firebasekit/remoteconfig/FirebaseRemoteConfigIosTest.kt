@@ -1,11 +1,11 @@
 package com.firebasekit.remoteconfig
 
-import com.firebasekit.native.FIRRemoteConfigFetchAndActivateStatus
-import com.firebasekit.native.FIRRemoteConfigFetchStatus
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.test.runTest
 import platform.Foundation.NSDate
 import platform.Foundation.NSError
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchAndActivateStatus
+import swiftPMImport.com.firebasekit.remote.config.FIRRemoteConfigFetchStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -24,27 +24,27 @@ class FirebaseRemoteConfigIosTest {
         override val longValue: Long = 0L,
         override val intValue: Int = 0,
         override val doubleValue: Double = Double.NaN,
-    ) : RemoteConfig.Value
+    ) : IosRemoteConfig.Value
 
     private class FakeSettings(
         override val minimumFetchInterval: Double = 0.0,
-    ) : RemoteConfig.Settings
+    ) : IosRemoteConfig.Settings
 
     private class FakeRemoteConfig(
         private val statusToReturn: FIRRemoteConfigFetchAndActivateStatus =
             FIRRemoteConfigFetchAndActivateStatus.FIRRemoteConfigFetchAndActivateStatusSuccessFetchedFromRemote,
         private val errorToReturn: NSError? = null,
-        private val values: Map<String, RemoteConfig.Value> = emptyMap(),
+        private val values: Map<String, IosRemoteConfig.Value> = emptyMap(),
         private val keys: Set<String> = emptySet(),
         override val lastFetchStatus: FIRRemoteConfigFetchStatus =
             FIRRemoteConfigFetchStatus.FIRRemoteConfigFetchStatusNoFetchYet,
         override val lastFetchTime: NSDate? = null,
-        override val configSettings: RemoteConfig.Settings = FakeSettings(),
-    ) : RemoteConfig {
+        override val configSettings: IosRemoteConfig.Settings = FakeSettings(),
+    ) : IosRemoteConfig {
 
         override fun keysWithPrefix(prefix: String): Set<String> = keys
 
-        override fun configValueForKey(key: String): RemoteConfig.Value =
+        override fun configValueForKey(key: String): IosRemoteConfig.Value =
             values[key] ?: FakeValue()
 
         override fun fetchAndActivateWithCompletionHandler(

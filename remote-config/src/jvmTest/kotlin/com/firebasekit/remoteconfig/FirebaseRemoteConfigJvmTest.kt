@@ -1,7 +1,7 @@
 package com.firebasekit.remoteconfig
 
 import com.firebasekit.core.FirebaseJvm
-import com.firebasekit.remoteconfig.models.InstallationResponse
+import com.firebasekit.core.models.InstallationResponse
 import com.firebasekit.remoteconfig.models.RemoteConfigResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -97,36 +97,6 @@ class FirebaseRemoteConfigJvmTest {
         assertNull(sut.getString("any_key"))
         assertNull(sut.getBoolean("any_key"))
         assertNull(sut.getLong("any_key"))
-    }
-
-    @Test
-    fun fetchAndActivate_reusesInstallation_onSubsequentCalls() = runTest {
-        var installationCallCount = 0
-        val engine = MockEngine { request ->
-            when {
-                "firebaseinstallations" in request.url.host -> {
-                    installationCallCount++
-                    respond(
-                        content = json.encodeToString(defaultInstallation),
-                        status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, "application/json"),
-                    )
-                }
-                "firebaseremoteconfig" in request.url.host -> respond(
-                    content = json.encodeToString(RemoteConfigResponse()),
-                    status = HttpStatusCode.OK,
-                    headers = headersOf(HttpHeaders.ContentType, "application/json"),
-                )
-                else -> error("Unexpected request to: ${request.url}")
-            }
-        }
-        val sut = FirebaseRemoteConfigJvm(buildClient(engine))
-
-        sut.fetchAndActivate()
-        sut.fetchAndActivate()
-
-        // Installation is created once and cached inside the instance
-        assertEquals(1, installationCallCount)
     }
 
     @Test

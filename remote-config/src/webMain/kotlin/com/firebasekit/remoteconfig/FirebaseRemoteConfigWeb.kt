@@ -9,8 +9,7 @@ import com.firebasekit.remoteconfig.bridge.jsValueAsNumber
 import com.firebasekit.remoteconfig.bridge.jsValueAsString
 import kotlin.js.ExperimentalWasmJsInterop
 
-actual val Firebase.remoteConfig: FirebaseRemoteConfig
-    get() = FirebaseRemoteConfigWeb()
+actual val Firebase.remoteConfig: FirebaseRemoteConfig by lazy { FirebaseRemoteConfigWeb() }
 
 @OptIn(ExperimentalWasmJsInterop::class)
 class FirebaseRemoteConfigWeb(bridge: RemoteConfig = RemoteConfigBridge()) : FirebaseRemoteConfig {

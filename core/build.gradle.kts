@@ -1,11 +1,15 @@
+import extension.buildLibrary
 import extension.defaultTargets
+import extension.publishLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import task.generateDefFiles
 
 plugins {
+    alias(libs.plugins.kotlinx.serialization)
     id("build-config")
+    id("publication")
 }
-version = "0.0.8"
+
+version = providers.gradleProperty("firebaseKitVersion").get()
 
 kotlin {
     val xcf = XCFramework("FirebaseKitCore")
@@ -18,24 +22,55 @@ kotlin {
                 xcf.add(this)
                 isStatic = true
             }
-
-            it.compilations["main"].cinterops {
-                create("FirebaseCore") {
-                    defFile(project.layout.projectDirectory.file("src/interop/FirebaseCore.def"))
-                }
+        },
+        jsConfig = {
+            compilations["main"].packageJson {
+                customField("dependencies", mapOf("firebase" to libs.versions.firebase.webNpm.get()))
             }
         }
     )
 
+    swiftPMDependencies {
+        swiftPackage(
+            url = url("https://github.com/firebase/firebase-ios-sdk.git"),
+            version = from(libs.versions.firebase.swiftPM.get()),
+            products = listOf(product("FirebaseCore")),
+            importedClangModules = listOf("FirebaseCore"),
+        )
+    }
+
+    sourceSets.configureEach {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
+
     sourceSets {
+        commonMain.dependencies {
+            implementation(libs.kotlinx.serialization.json)
+        }
+        jvmMain.dependencies {
+            implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.java)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.kotlinx.json)
+        }
         androidMain.dependencies {
             implementation(libs.firebase.remoteConfigs)
         }
 
         webMain.dependencies {
-            implementation(devNpm("firebase", libs.versions.firebase.webNpm.remoteConfigs.get()))
+            api(devNpm("firebase", libs.versions.firebase.webNpm.get()))
         }
     }
 }
 
-generateDefFiles("FirebaseCore")
+buildLibrary(libraryName = "FirebaseKitCore")
+
+publishLibrary(
+    name = "Firebase KMP Kit",
+    description = "A Kotlin Multiplatform library that provides Firebase Services in common code.",
+    artifactId = "core"
+)

@@ -97,3 +97,12 @@ app/keys/
 /remote-config/src/interop/RemoteConfig.def
 /CLAUDE.md
 /core/src/interop/FirebaseCore.def
+/keys/
+/AGENTS.md
+/.swiftpm-locks/
+/.gradle-local/
+/sample/iosApp/KotlinMultiplatformLinkedPackage/subpackages/
+/sample/iosApp/KotlinMultiplatformLinkedPackage/.swiftpm/
+/publication/gradle.properties
+/gradle-plugin/local.properties
+/gradle-plugin/gradle.properties
