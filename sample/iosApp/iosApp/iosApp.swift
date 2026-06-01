@@ -38,7 +38,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         // Required so Firebase can associate APNs <-> FCM
         Messaging.messaging().apnsToken = deviceToken
 
-        FirebaseKt.ForwardApnsToken(deviceToken: deviceToken)
+        FirebaseKt.SetApnsToken(deviceToken: deviceToken)
     }
 
     // Silent/background push or data handling entry point

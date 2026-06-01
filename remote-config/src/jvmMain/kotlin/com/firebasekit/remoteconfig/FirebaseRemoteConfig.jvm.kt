@@ -51,11 +51,13 @@ class FirebaseRemoteConfigJvm(private val client: HttpClient) : JvmRemoteConfig(
     private val configValues = mutableMapOf<String, String>()
 
     override suspend fun fetchAndActivate() {
+        updateRemoteConfigs(FirebaseJvm)
+
         CoroutineScope(Dispatchers.IO).launch {
             settings.refreshInterval.collectLatest {
                 while (true) {
-                    updateRemoteConfigs(FirebaseJvm)
                     delay(it)
+                    updateRemoteConfigs(FirebaseJvm)
                 }
             }
         }
