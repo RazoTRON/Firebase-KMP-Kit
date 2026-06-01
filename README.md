@@ -15,13 +15,13 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 
 ## Supported Targets
 
-| Module          | Android | iOS | JS | Wasm | Desktop | Description                                                   |
-|-----------------|:-------:|:---:|:--:|:----:|:-------:|---------------------------------------------------------------|
-| `analytics`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Analytics event logging and user properties          |
-| `core`          |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                    |
-| `messaging`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Cloud Messaging token APIs; Desktop uses a browser bridge |
-| `performance`   |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Performance Monitoring custom traces and HTTP metrics |
-| `remote-config` |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Remote Config |
+| Module            | Android | iOS | JS | Wasm | Desktop | Description                                                   |
+|-------------------|:-------:|:---:|:--:|:----:|:-------:|---------------------------------------------------------------|
+| `analytics`       |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Analytics event logging and user properties          |
+| `core`            |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                    |
+| `messaging`       |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Cloud Messaging token APIs; Desktop uses a browser bridge |
+| `performance`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Performance Monitoring custom traces and HTTP metrics |
+| `remote-config`   |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Remote Config |
 
 ### KMP Target Names
 

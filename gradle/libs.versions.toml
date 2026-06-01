@@ -1,27 +1,27 @@
 [versions]
 
-kotlin = "2.4.0-Beta2"
+kotlin = "2.4.0-RC2"
 compose-multiplatform = "1.10.3"
 material3 = "1.10.0-alpha05"
 agp = "8.13.2"
 androidx-activityCompose = "1.13.0"
-kotlinx-coroutines = "1.10.2"
-kotlinx-serialization = "1.10.0"
-kotlinx-datetime = "0.7.1"
-ktor = "3.4.2"
+kotlinx-coroutines = "1.11.0"
+kotlinx-serialization = "1.11.0"
+kotlinx-datetime = "0.8.0"
+ktor = "3.5.0"
 google-services = "4.4.4"
 buildconfig = "6.0.9"
 node-gradle = "7.1.0"
-mockk = "1.14.9"
-robolectric = "4.16"
+mockk = "1.14.11"
+robolectric = "4.16.1"
 vanniktech-gradle = "0.36.0"
 
 conventionKotlin = "2.3.20" # Convention plugins sometimes need older Kotlin for compatibility with kotlin-dsl plugin
 
-firebase-remoteConfigs = "23.0.1"
+firebase-remoteConfigs = "23.1.0"
 firebase-analytics = "23.2.0"
 firebase-messaging = "24.0.1"
-firebase-performance = "22.0.4"
+firebase-performance = "22.0.5"
 firebase-webNpm = "10.13.2"
 firebase-swiftPM = "12.12.0"
 
