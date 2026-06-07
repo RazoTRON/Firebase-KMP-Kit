@@ -36,6 +36,7 @@ includeBuild("gradle-plugin")
 
 include(":analytics")
 include(":core")
+include(":crashlytics")
 include(":messaging")
 include(":performance")
 include(":remote-config")

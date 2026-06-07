@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "2.4.0-RC2"
+kotlin = "2.4.0"
 compose-multiplatform = "1.10.3"
 material3 = "1.10.0-alpha05"
 agp = "8.13.2"
@@ -10,7 +10,7 @@ kotlinx-serialization = "1.11.0"
 kotlinx-datetime = "0.8.0"
 ktor = "3.5.0"
 google-services = "4.4.4"
-buildconfig = "6.0.9"
+buildconfig = "6.0.10"
 node-gradle = "7.1.0"
 mockk = "1.14.11"
 robolectric = "4.16.1"
@@ -20,7 +20,9 @@ conventionKotlin = "2.3.20" # Convention plugins sometimes need older Kotlin for
 
 firebase-remoteConfigs = "23.1.0"
 firebase-analytics = "23.2.0"
-firebase-messaging = "24.0.1"
+firebase-crashlytics = "20.0.6"
+firebase-crashlytics-plugin = "3.0.7"
+firebase-messaging = "25.0.2"
 firebase-performance = "22.0.5"
 firebase-webNpm = "10.13.2"
 firebase-swiftPM = "12.12.0"
@@ -45,6 +47,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 
 firebase-remoteConfigs = { module = "com.google.firebase:firebase-config", version.ref = "firebase-remoteConfigs" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics", version.ref = "firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebase-crashlytics" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebase-messaging" }
 firebase-performance = { module = "com.google.firebase:firebase-perf", version.ref = "firebase-performance" }
 
@@ -77,5 +80,6 @@ android-kmp-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
 buildconfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildconfig" }
 node-gradle = { id = "com.github.node-gradle.node", version.ref = "node-gradle" }

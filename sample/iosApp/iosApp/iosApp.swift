@@ -39,6 +39,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         Messaging.messaging().apnsToken = deviceToken
 
         FirebaseKt.SetApnsToken(deviceToken: deviceToken)
+        FirebaseKt.setupCrashlytics()
     }
 
     // Silent/background push or data handling entry point

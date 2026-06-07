@@ -43,6 +43,7 @@ kotlin {
             api(projects.analytics)
             api(projects.messaging)
             api(projects.remoteConfig)
+            api(projects.crashlytics)
 
             api(libs.compose.runtime)
             api(libs.compose.ui)
