@@ -34,14 +34,16 @@ internal class FirebaseCache(
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
-            install(Logging) {
-                logger = object : Logger {
-                    override fun log(message: String) {
-                        println(message + "\n")
+            if (Firebase.enableLogs) {
+                install(Logging) {
+                    logger = object : Logger {
+                        override fun log(message: String) {
+                            println(message + "\n")
+                        }
                     }
-                }
 
-                level = LogLevel.BODY
+                    level = LogLevel.BODY
+                }
             }
         }
     }

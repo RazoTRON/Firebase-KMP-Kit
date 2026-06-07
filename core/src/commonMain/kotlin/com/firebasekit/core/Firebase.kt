@@ -1,3 +1,5 @@
 package com.firebasekit.core
 
-object Firebase
+object Firebase {
+    var enableLogs: Boolean = false
+}
