@@ -11,7 +11,7 @@ Add the module to the shared source set that needs Remote Config:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.razotron.firebase-kit:remote-config:0.3.1")
+            implementation("io.github.razotron.firebase-kit:remote-config:0.4.0")
         }
     }
 }
