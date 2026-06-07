@@ -19,10 +19,10 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 |---------------------|:-------:|:---:|:--:|:----:|:-------:|-------------------------------------------------------------------------------------------------------------------------------------|
 | `analytics`         |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Analytics event logging and user properties                                                                                |
 | `core`              |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                                                                                                   |
-| `crashlytics`       |    ✅    |  ✅  | -  |  -   |    -    | Experimental Firebase Crashlytics crash reporting for mobile targets. There is no official Firebase SDK for Web or Desktop targets. |
 | `messaging`         |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Cloud Messaging token APIs; Desktop uses a browser bridge                                                                  |
 | `performance`       |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Performance Monitoring custom traces and HTTP metrics                                                                      |
 | `remote-config`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Remote Config                                                                                                              |
+| `crashlytics`       |    ✅    |  ✅  | -  |  -   |    -    | Experimental Firebase Crashlytics crash reporting for mobile targets. There is no official Firebase SDK for Web or Desktop targets. |
 
 ### KMP Target Names
 
