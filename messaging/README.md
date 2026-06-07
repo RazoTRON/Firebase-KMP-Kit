@@ -11,7 +11,7 @@ Add the module to the shared source set that needs Messaging:
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.razotron.firebase-kit:messaging:0.3.1")
+            implementation("io.github.razotron.firebase-kit:messaging:0.4.0")
         }
     }
 }

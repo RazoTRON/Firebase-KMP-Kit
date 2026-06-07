@@ -1,6 +1,6 @@
 # 🔥 Firebase KMP Kit
 ![Static Badge](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20JS%20%7C%20WASM%20%7C%20Desktop-brightgreen)
-![Static Badge](https://img.shields.io/badge/Kotlin-2.3.0-violet)
+![Static Badge](https://img.shields.io/badge/Kotlin-2.4.0-violet)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
 A **Kotlin Multiplatform** library that provides **Firebase Services** across all major platforms **(Android, iOS, JS, WASM, Desktop)** through a single, unified API.
@@ -15,13 +15,14 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 
 ## Supported Targets
 
-| Module            | Android | iOS | JS | Wasm | Desktop | Description                                                   |
-|-------------------|:-------:|:---:|:--:|:----:|:-------:|---------------------------------------------------------------|
-| `analytics`       |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Analytics event logging and user properties          |
-| `core`            |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                    |
-| `messaging`       |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Cloud Messaging token APIs; Desktop uses a browser bridge |
-| `performance`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Performance Monitoring custom traces and HTTP metrics |
-| `remote-config`   |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Remote Config |
+| Module              | Android | iOS | JS | Wasm | Desktop | Description                                                                                                                         |
+|---------------------|:-------:|:---:|:--:|:----:|:-------:|-------------------------------------------------------------------------------------------------------------------------------------|
+| `analytics`         |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Analytics event logging and user properties                                                                                |
+| `core`              |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase instance                                                                                                                   |
+| `crashlytics`       |    ✅    |  ✅  | -  |  -   |    -    | Experimental Firebase Crashlytics crash reporting for mobile targets. There is no official Firebase SDK for Web or Desktop targets. |
+| `messaging`         |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Cloud Messaging token APIs; Desktop uses a browser bridge                                                                  |
+| `performance`       |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Performance Monitoring custom traces and HTTP metrics                                                                      |
+| `remote-config`     |    ✅    |  ✅  | ✅  |  ✅   |    ✅    | Firebase Remote Config                                                                                                              |
 
 ### KMP Target Names
 
@@ -40,10 +41,11 @@ A **Kotlin Multiplatform** library that provides **Firebase Services** across al
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.razotron.firebase-kit:analytics:0.3.1")
-            implementation("io.github.razotron.firebase-kit:remote-config:0.3.1")
-            implementation("io.github.razotron.firebase-kit:messaging:0.3.1")
-            implementation("io.github.razotron.firebase-kit:performance:0.3.1")
+            implementation("io.github.razotron.firebase-kit:analytics:0.4.0")
+            implementation("io.github.razotron.firebase-kit:remote-config:0.4.0")
+            implementation("io.github.razotron.firebase-kit:messaging:0.4.0")
+            implementation("io.github.razotron.firebase-kit:performance:0.4.0")
+            implementation("io.github.razotron.firebase-kit:crashlytics:0.4.0")
         }
     }
 }
@@ -152,6 +154,24 @@ metric.stop()
 ```
 
 See the full [Performance module guide](performance/README.md) for installation, platform setup, target differences, and sample app usage.
+
+## Crashlytics - Experimental
+
+`crashlytics` exposes Firebase Crashlytics crash reporting APIs through `Firebase.crashlytics`. This feature is **Experimental** and currently backed by native SDKs on Android and iOS only.
+
+There is no Firebase Crashlytics SDK for Web (JS/Wasm) or Desktop targets.
+
+```kotlin
+// commonMain
+
+Firebase.crashlytics.setCrashlyticsCollectionEnabled(true)
+Firebase.crashlytics.setUserId("user-42")
+Firebase.crashlytics.setCustomKey("screen", "checkout")
+Firebase.crashlytics.log("Checkout started")
+Firebase.crashlytics.recordException(throwable)
+```
+
+See the full [Crashlytics module guide](crashlytics/README.md) for installation, platform setup, target differences, and sample app usage.
 
 ## Platform Setup
 

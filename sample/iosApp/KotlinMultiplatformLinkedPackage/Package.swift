@@ -17,6 +17,7 @@ let package = Package(
     .package(path: "subpackages/_analytics"),
     .package(path: "subpackages/_messaging"),
     .package(path: "subpackages/_remote_config"),
+    .package(path: "subpackages/_crashlytics"),
     .package(path: "subpackages/_core")
   ],
   targets: [
@@ -27,6 +28,7 @@ let package = Package(
         .product(name: "_analytics", package: "_analytics"),
         .product(name: "_messaging", package: "_messaging"),
         .product(name: "_remote_config", package: "_remote_config"),
+        .product(name: "_crashlytics", package: "_crashlytics"),
         .product(name: "_core", package: "_core")
       ]
     )

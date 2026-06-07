@@ -81,6 +81,7 @@ app/keys/
 /captures
 .externalNativeBuild
 .cxx
+/.*/
 /.kotlin/
 /.claude/settings.local.json
 /.swiftpm/xcode/package.xcworkspace/xcuserdata/razotron.xcuserdatad/xcschemes/xcschememanagement.plist
